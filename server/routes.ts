@@ -1,5 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { type Server } from "http";
+import path from "path";
+import fs from "fs";
 import cron from "node-cron";
 import { syncProducts, getProducts, getProductById, type Product } from "./productSync";
 import { log } from "./index";
@@ -590,10 +592,29 @@ export async function registerRoutes(
   app.post("/api/sync", async (_req, res) => {
     try {
       const count = await syncProducts();
-      res.json({ success: true, count });
+      const products = getProducts();
+      res.json({ success: true, synced: count, loaded: products.length });
     } catch (err: any) {
-      res.status(500).json({ error: err.message });
+      log(`Sync endpoint error: ${err.stack || err.message}`, "sync");
+      res.status(500).json({ error: err.message, stack: err.stack });
     }
+  });
+
+  app.get("/api/debug/products", (_req, res) => {
+    const products = getProducts();
+    const dataFile = path.join(process.cwd(), "data", "products.json");
+    const fileExists = fs.existsSync(dataFile);
+    const fileSize = fileExists ? fs.statSync(dataFile).size : 0;
+    res.json({
+      cwd: process.cwd(),
+      dataFile,
+      fileExists,
+      fileSize,
+      productsInMemory: products.length,
+      oasisKeySet: !!process.env.OASIS_API_KEY,
+      oasisKeyLength: (process.env.OASIS_API_KEY || "").length,
+      sample: products.slice(0, 2).map(p => ({ id: p.id, name: p.name, price: p.price })),
+    });
   });
 
   app.get("/sitemap.xml", (_req, res) => {

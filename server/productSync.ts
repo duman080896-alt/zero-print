@@ -160,17 +160,24 @@ export async function syncProducts(): Promise<number> {
     log("OASIS_API_KEY not set, skipping sync", "sync");
     return 0;
   }
-  log("Starting product sync from Oasis API...", "sync");
+  log(`Starting product sync from Oasis API... (key: ${API_KEY.substring(0, 4)}...${API_KEY.substring(API_KEY.length - 4)})`, "sync");
 
   const url = `https://api.oasiscatalog.com/v4/products?key=${API_KEY}&currency=kzt&format=csv&no_vat=1&moscow=1&category=${CATEGORY_IDS}`;
+  log(`Fetching: ${url.replace(API_KEY, "***")}`, "sync");
 
   const response = await fetch(url);
+  log(`API response status: ${response.status} ${response.statusText}`, "sync");
+  log(`API response headers: content-type=${response.headers.get("content-type")}, content-length=${response.headers.get("content-length")}`, "sync");
+
   if (!response.ok) {
-    throw new Error(`API request failed: ${response.status}`);
+    const body = await response.text();
+    log(`API error body: ${body.substring(0, 500)}`, "sync");
+    throw new Error(`API request failed: ${response.status} - ${body.substring(0, 200)}`);
   }
 
   const csvText = await response.text();
-  log(`Downloaded CSV: ${(csvText.length / 1024 / 1024).toFixed(1)}MB`, "sync");
+  log(`Downloaded response: ${csvText.length} chars (${(csvText.length / 1024 / 1024).toFixed(2)}MB)`, "sync");
+  log(`First 300 chars: ${csvText.substring(0, 300)}`, "sync");
 
   const records: RawProduct[] = parse(csvText, {
     columns: true,
@@ -292,10 +299,20 @@ export async function syncProducts(): Promise<number> {
   products.sort((a, b) => b.stock - a.stock);
 
   const dataDir = path.dirname(DATA_FILE);
+  log(`Data dir: ${dataDir}, exists: ${fs.existsSync(dataDir)}`, "sync");
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
+    log(`Created data dir: ${dataDir}`, "sync");
   }
-  fs.writeFileSync(DATA_FILE, JSON.stringify(products));
+  const jsonData = JSON.stringify(products);
+  log(`Writing ${jsonData.length} bytes to ${DATA_FILE}`, "sync");
+  fs.writeFileSync(DATA_FILE, jsonData);
+  const written = fs.existsSync(DATA_FILE);
+  const fileSize = written ? fs.statSync(DATA_FILE).size : 0;
+  log(`File written: ${written}, size: ${fileSize} bytes`, "sync");
+
+  cachedProducts = null;
+  cacheTime = 0;
 
   log(`Synced ${products.length} grouped products, saved to ${DATA_FILE}`, "sync");
   return products.length;
