@@ -3,7 +3,7 @@ import { type Server } from "http";
 import path from "path";
 import fs from "fs";
 import cron from "node-cron";
-import { syncProducts, getProducts, getProductById, type Product } from "./productSync";
+import { syncProducts, getProducts, getProductById, ensureProductsLoaded, type Product } from "./productSync";
 import { log } from "./index";
 import { db } from "./db";
 import { clients, orders, wishlist, managers, proposals, subscribers } from "../shared/schema";
@@ -390,6 +390,10 @@ export async function registerRoutes(
   app: Express
 ): Promise<Server> {
 
+  ensureProductsLoaded()
+    .then(() => log(`Products pre-loaded from database`, "sync"))
+    .catch(err => log(`Failed to pre-load products: ${err.message}`, "sync"));
+
   syncProducts().catch(err => log(`Initial sync failed: ${err.message}`, "sync"));
 
   cron.schedule("0 3 * * *", () => {
@@ -600,21 +604,26 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/debug/products", (_req, res) => {
-    const products = getProducts();
-    const dataFile = path.join(process.cwd(), "data", "products.json");
-    const fileExists = fs.existsSync(dataFile);
-    const fileSize = fileExists ? fs.statSync(dataFile).size : 0;
-    res.json({
-      cwd: process.cwd(),
-      dataFile,
-      fileExists,
-      fileSize,
-      productsInMemory: products.length,
-      oasisKeySet: !!process.env.OASIS_API_KEY,
-      oasisKeyLength: (process.env.OASIS_API_KEY || "").length,
-      sample: products.slice(0, 2).map(p => ({ id: p.id, name: p.name, price: p.price })),
-    });
+  app.get("/api/debug/products", async (_req, res) => {
+    try {
+      await ensureProductsLoaded();
+      const products = getProducts();
+      const { productCache: pc } = await import("../shared/schema");
+      const rows = await db.select().from(pc);
+      const dbRow = rows[0];
+      const dbProductCount = dbRow?.data ? (dbRow.data as any[]).length : 0;
+      res.json({
+        storage: "postgresql",
+        productsInMemory: products.length,
+        productsInDb: dbProductCount,
+        dbSyncedAt: dbRow?.syncedAt || null,
+        oasisKeySet: !!process.env.OASIS_API_KEY,
+        oasisKeyLength: (process.env.OASIS_API_KEY || "").length,
+        sample: products.slice(0, 2).map(p => ({ id: p.id, name: p.name, price: p.price })),
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message, stack: err.stack });
+    }
   });
 
   app.get("/sitemap.xml", (_req, res) => {

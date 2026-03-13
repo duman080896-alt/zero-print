@@ -1,7 +1,8 @@
-import fs from "fs";
-import path from "path";
 import { parse } from "csv-parse/sync";
 import { log } from "./index";
+import { db } from "./db";
+import { productCache } from "../shared/schema";
+import { eq } from "drizzle-orm";
 
 const API_KEY = process.env.OASIS_API_KEY || "";
 const CATEGORY_IDS = "3257,3180,3095,3140,3167,3225,3089,5316,2953,3238,3021,3058,5272,2892,3275,4047,3208,5312,3070,2931,3543,4197,3517";
@@ -18,7 +19,8 @@ function applyMarkup(rawPrice: number): number {
   const rule = MARKUP_RULES.find(r => rawPrice < r.maxPrice);
   return roundPrice(rawPrice * (rule?.markup ?? 1.25));
 }
-const DATA_FILE = path.join(process.cwd(), "data", "products.json");
+
+const CACHE_KEY = "products_v1";
 
 export interface ProductVariant {
   id: string;
@@ -130,27 +132,6 @@ function getBaseName(name: string): string {
   return name.replace(/,\s*[^,]+$/, "").trim();
 }
 
-function extractBrandingMethods(branding: string): string[] {
-  if (!branding) return [];
-  const methods = new Set<string>();
-  const parts = branding.split(";");
-  for (const part of parts) {
-    const nameMatch = part.match(/name:([^;|]+)/);
-    if (nameMatch) {
-      const rawName = nameMatch[1].trim();
-      const cleanName = rawName.replace(/\s*\(.*?\)\s*/g, "").trim();
-      if (cleanName && cleanName.length < 40) methods.add(cleanName);
-    } else {
-      const match = part.match(/^([^(]+)/);
-      if (match) {
-        const method = match[1].trim();
-        if (method && method.length < 40 && !method.startsWith("id:")) methods.add(method);
-      }
-    }
-  }
-  return Array.from(methods);
-}
-
 function roundPrice(price: number): number {
   return Math.round(price);
 }
@@ -179,6 +160,11 @@ export async function syncProducts(): Promise<number> {
   log(`Downloaded response: ${csvText.length} chars (${(csvText.length / 1024 / 1024).toFixed(2)}MB)`, "sync");
   log(`First 300 chars: ${csvText.substring(0, 300)}`, "sync");
 
+  if (csvText.length < 100) {
+    log(`Response too short, likely an error. Full body: ${csvText}`, "sync");
+    throw new Error(`API returned insufficient data (${csvText.length} chars)`);
+  }
+
   const records: RawProduct[] = parse(csvText, {
     columns: true,
     skip_empty_lines: true,
@@ -187,6 +173,11 @@ export async function syncProducts(): Promise<number> {
   });
 
   log(`Parsed ${records.length} raw products`, "sync");
+
+  if (records.length === 0) {
+    log("No records parsed from CSV, aborting sync", "sync");
+    throw new Error("CSV parsed but produced 0 records");
+  }
 
   const groups = new Map<string, RawProduct[]>();
 
@@ -298,44 +289,53 @@ export async function syncProducts(): Promise<number> {
 
   products.sort((a, b) => b.stock - a.stock);
 
-  const dataDir = path.dirname(DATA_FILE);
-  log(`Data dir: ${dataDir}, exists: ${fs.existsSync(dataDir)}`, "sync");
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-    log(`Created data dir: ${dataDir}`, "sync");
-  }
-  const jsonData = JSON.stringify(products);
-  log(`Writing ${jsonData.length} bytes to ${DATA_FILE}`, "sync");
-  fs.writeFileSync(DATA_FILE, jsonData);
-  const written = fs.existsSync(DATA_FILE);
-  const fileSize = written ? fs.statSync(DATA_FILE).size : 0;
-  log(`File written: ${written}, size: ${fileSize} bytes`, "sync");
+  log(`Saving ${products.length} products to PostgreSQL...`, "sync");
+  await db.delete(productCache).where(eq(productCache.id, CACHE_KEY));
+  await db.insert(productCache).values({
+    id: CACHE_KEY,
+    data: products as any,
+    syncedAt: new Date(),
+  });
+  log(`Saved ${products.length} products to PostgreSQL successfully`, "sync");
 
-  cachedProducts = null;
-  cacheTime = 0;
+  cachedProducts = products;
+  cacheTime = Date.now();
 
-  log(`Synced ${products.length} grouped products, saved to ${DATA_FILE}`, "sync");
   return products.length;
 }
 
 let cachedProducts: Product[] | null = null;
 let cacheTime = 0;
+let loadPromise: Promise<Product[]> | null = null;
 
-export function getProducts(): Product[] {
-  const now = Date.now();
-  if (cachedProducts && now - cacheTime < 60000) return cachedProducts;
-
+async function loadFromDb(): Promise<Product[]> {
   try {
-    if (fs.existsSync(DATA_FILE)) {
-      const data = fs.readFileSync(DATA_FILE, "utf-8");
-      cachedProducts = JSON.parse(data);
-      cacheTime = now;
-      return cachedProducts!;
+    const rows = await db.select().from(productCache).where(eq(productCache.id, CACHE_KEY));
+    if (rows.length > 0 && rows[0].data) {
+      cachedProducts = rows[0].data as Product[];
+      cacheTime = Date.now();
+      log(`Loaded ${cachedProducts.length} products from PostgreSQL`, "sync");
+      return cachedProducts;
     }
   } catch (e) {
-    log(`Error reading products: ${e}`, "sync");
+    log(`Error reading products from DB: ${e}`, "sync");
   }
   return [];
+}
+
+export async function ensureProductsLoaded(): Promise<void> {
+  if (cachedProducts && cachedProducts.length > 0) return;
+  if (!loadPromise) {
+    loadPromise = loadFromDb().finally(() => { loadPromise = null; });
+  }
+  await loadPromise;
+}
+
+export function getProducts(): Product[] {
+  if (!cachedProducts || cachedProducts.length === 0) {
+    loadFromDb();
+  }
+  return cachedProducts || [];
 }
 
 export function getProductById(id: string): Product | undefined {

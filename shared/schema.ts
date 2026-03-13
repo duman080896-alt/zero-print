@@ -86,3 +86,9 @@ export const subscribers = pgTable("subscribers", {
   isActive: boolean("is_active").default(true),
   subscribedAt: timestamp("subscribed_at").defaultNow(),
 });
+
+export const productCache = pgTable("product_cache", {
+  id: text("id").primaryKey(),
+  data: jsonb("data"),
+  syncedAt: timestamp("synced_at").defaultNow(),
+});

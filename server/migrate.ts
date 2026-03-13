@@ -87,6 +87,12 @@ export async function runMigrations() {
       is_active BOOLEAN DEFAULT true,
       subscribed_at TIMESTAMP DEFAULT now()
     );
+
+    CREATE TABLE IF NOT EXISTS product_cache (
+      id TEXT PRIMARY KEY,
+      data JSONB,
+      synced_at TIMESTAMP DEFAULT now()
+    );
   `);
 
   console.log("Database migrations complete.");
