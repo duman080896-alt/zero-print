@@ -17,6 +17,7 @@ export interface ServiceConfig {
     h1: string;
     subtitle: string;
     benefits: string[];
+    heroImage?: string;
   };
   stats: { value: string; label: string }[];
   services: { emoji: string; name: string; price: string; desc?: string; href?: string }[];
@@ -123,58 +124,85 @@ export default function ServiceLanding({ config }: { config: ServiceConfig }) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaBreadcrumb) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaFaq) }} />
 
-      <section className="relative min-h-[90vh] flex items-center text-white" data-testid="section-hero">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0a1628] via-[#0f1f3a] to-[#0a1628]" />
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }} />
+      <section
+        className="relative min-h-[90vh] flex items-center text-white overflow-hidden animate-gradient"
+        style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #1a56db 70%, #0f172a 100%)" }}
+        data-testid="section-hero"
+      >
+        <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }} />
+
         <div className="container relative z-10 mx-auto px-4 py-20">
-          <nav className="text-sm text-gray-400 mb-8" data-testid="breadcrumbs">
-            <Link href="/" className="hover:text-white">Главная</Link>
-            <span className="mx-2">/</span>
-            <span className="text-gray-300">Услуги</span>
-            <span className="mx-2">/</span>
-            <span className="text-white">{config.breadcrumbName}</span>
-          </nav>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-          <span className="inline-block bg-[#E8500A] text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-6" data-testid="hero-badge">
-            {config.hero.badge}
-          </span>
+            <div>
+              <nav className="text-sm text-blue-300 mb-8 animate-fadeInUp" data-testid="breadcrumbs">
+                <Link href="/" className="hover:text-white transition-colors">Главная</Link>
+                <span className="mx-2 opacity-50">/</span>
+                <span className="text-blue-200">Услуги</span>
+                <span className="mx-2 opacity-50">/</span>
+                <span className="text-white">{config.breadcrumbName}</span>
+              </nav>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-heading mb-6 max-w-4xl leading-tight" data-testid="hero-h1">
-            {config.hero.h1}
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl" data-testid="hero-subtitle">
-            {config.hero.subtitle}
-          </p>
+              <span className="inline-block bg-[#E8500A] text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-6 animate-fadeInUp-delay-1" data-testid="hero-badge">
+                {config.hero.badge}
+              </span>
 
-          <div className="space-y-3 mb-10">
-            {config.hero.benefits.map((b, i) => (
-              <div key={i} className="flex items-center gap-3 text-lg" data-testid={`hero-benefit-${i}`}>
-                <span className="text-[#25D366] text-xl">✓</span>
-                <span>{b}</span>
+              <h1 className="text-4xl md:text-5xl lg:text-[3.2rem] font-bold font-heading mb-6 leading-tight animate-fadeInUp-delay-1" data-testid="hero-h1">
+                {config.hero.h1}
+              </h1>
+
+              <p className="text-xl text-blue-100 mb-8 leading-relaxed animate-fadeInUp-delay-2" data-testid="hero-subtitle">
+                {config.hero.subtitle}
+              </p>
+
+              <div className="space-y-3 mb-10 animate-fadeInUp-delay-2">
+                {config.hero.benefits.map((b, i) => (
+                  <div key={i} className="flex items-start gap-3 text-base" data-testid={`hero-benefit-${i}`}>
+                    <span className="text-[#25D366] text-lg mt-0.5 flex-shrink-0">✓</span>
+                    <span className="text-blue-50">{b}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-10">
-            <a
-              href="#calculator"
-              className="inline-flex items-center justify-center gap-2 bg-[#E8500A] text-white px-8 py-4 rounded-xl text-lg font-bold hover:bg-[#d14709] transition-colors"
-              data-testid="hero-cta-calc"
-            >
-              Получить расчёт →
-            </a>
-            <a
-              href="#services"
-              className="inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur text-white border border-white/20 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white/20 transition-colors"
-              data-testid="hero-cta-examples"
-            >
-              Смотреть примеры
-            </a>
-          </div>
+              <div className="flex flex-col sm:flex-row gap-3 animate-fadeInUp-delay-3">
+                <a
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Здравствуйте! Хочу получить расчёт стоимости (${config.formServiceName}).`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-[#25D366] text-white px-7 py-4 rounded-xl text-base font-bold hover:bg-[#20bd5a] transition-all hover:shadow-lg hover:shadow-green-900/30"
+                  data-testid="hero-cta-calc"
+                >
+                  <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.339 0-4.508-.755-6.273-2.035l-.438-.326-3.275 1.098 1.098-3.275-.326-.438A9.935 9.935 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                  Получить расчёт
+                </a>
+                <a
+                  href="#services"
+                  className="inline-flex items-center justify-center gap-2 bg-transparent text-white border border-white/40 px-7 py-4 rounded-xl text-base font-semibold hover:bg-white/10 hover:border-white/70 transition-all"
+                  data-testid="hero-cta-examples"
+                >
+                  Смотреть примеры
+                </a>
+              </div>
 
-          <p className="text-gray-400 flex items-center gap-2">
-            <span className="text-[#25D366]">✅</span> Уже заказали: 500+ компаний
-          </p>
+              <p className="text-blue-300 text-sm flex items-center gap-2 mt-6 animate-fadeInUp-delay-4">
+                <span className="text-[#25D366]">✅</span> Уже заказали: 500+ компаний
+              </p>
+            </div>
+
+            {config.hero.heroImage && (
+              <div className="hidden lg:block animate-fadeInUp-delay-2">
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/40 ring-1 ring-white/10">
+                  <img
+                    src={config.hero.heroImage}
+                    alt={config.hero.h1}
+                    className="w-full h-[500px] object-cover"
+                    loading="eager"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a]/60 via-transparent to-transparent" />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
