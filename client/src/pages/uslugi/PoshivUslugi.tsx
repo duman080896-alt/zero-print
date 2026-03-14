@@ -13,7 +13,7 @@ const config: ServiceConfig = {
     badge: "Для бизнеса • От 50 штук",
     h1: "Пошив корпоративной одежды под ключ",
     subtitle: "От разработки дизайна до готового изделия с нанесённым логотипом. Собственный швейный цех в Алматы.",
-    heroImage: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&auto=format&fit=crop",
+    heroImage: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800&auto=format&fit=crop",
     benefits: [
       "Полный цикл — дизайн, пошив, нанесение логотипа",
       "Любые ткани и фурнитура — по вашему ТЗ или подберём сами",

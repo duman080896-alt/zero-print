@@ -13,7 +13,7 @@ const config: ServiceConfig = {
     badge: "Для бизнеса • От 50 штук",
     h1: "Вышивка логотипа на одежде в Казахстане",
     subtitle: "Профессиональная машинная вышивка для корпоративной одежды. Долговечно, презентабельно, статусно.",
-    heroImage: "https://images.unsplash.com/photo-1604537529428-15bcbeecfe4d?w=800&auto=format&fit=crop",
+    heroImage: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=800&auto=format&fit=crop",
     benefits: [
       "Держится 10+ лет — не выцветает и не смывается",
       "Выглядит статусно — идеально для корпоративной формы",

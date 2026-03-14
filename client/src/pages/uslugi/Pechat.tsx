@@ -13,7 +13,7 @@ const config: ServiceConfig = {
     badge: "Для бизнеса • От 50 штук",
     h1: "Нанесение логотипа на одежду в Казахстане",
     subtitle: "DTF, шелкография, термотрансфер — выбираем оптимальный метод под ваш тираж и бюджет.",
-    heroImage: "https://images.unsplash.com/photo-1562654501-a0ccc0fc3fb1?w=800&auto=format&fit=crop",
+    heroImage: "https://images.unsplash.com/photo-1503694978374-8a2fa686963a?w=800&auto=format&fit=crop",
     benefits: [
       "4 метода нанесения — подберём лучший для вашей задачи",
       "Полноцветная печать — точная передача цветов логотипа",
