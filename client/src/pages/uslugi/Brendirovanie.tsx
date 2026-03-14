@@ -13,7 +13,7 @@ const config: ServiceConfig = {
     badge: "Для бизнеса • От 50 штук",
     h1: "Брендирование сувенирной продукции с логотипом",
     subtitle: "Более 5000 товаров для нанесения логотипа вашей компании. Ручки, термосы, кружки, зонты, флешки и многое другое.",
-    heroImage: "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?w=800&auto=format&fit=crop",
+    heroImage: "https://images.unsplash.com/photo-1637904731042-2ef367b8c00c?w=800&auto=format&fit=crop",
     benefits: [
       "5000+ позиций в каталоге — найдём товар под любой бюджет",
       "Все виды нанесения — тампопечать, гравировка, УФ-печать",
