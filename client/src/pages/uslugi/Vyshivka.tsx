@@ -48,6 +48,16 @@ const config: ServiceConfig = {
     { q: "Можно ли вышить на своей одежде?", a: "Да, принимаем давальческое сырьё." },
     { q: "Как выглядит вышивка через несколько лет?", a: "Вышивка сохраняет вид 10+ лет при правильном уходе." },
   ],
+  gallery: [
+    { image: "/assets/portfolio/vyshivka-doner.jpg", client: "Doner na Abaya", tag: "Вышивка на поло" },
+    { image: "/assets/portfolio/vyshivka-salambro.jpg", client: "Salam Bro", tag: "Вышивка на кепке и поло" },
+    { image: "/assets/portfolio/vyshivka-magnum.jpg", client: "Magnum GO", tag: "Вышивка на куртках" },
+    { image: "/assets/portfolio/vyshivka-prom.jpg", client: "Пром Привод", tag: "Вышивка на спецодежде" },
+    { image: "/assets/portfolio/lukoil-polo.jpg", client: "Лукойл", tag: "Вышивка + орнамент на поло" },
+    { image: "/assets/portfolio/dia-jackets.jpg", client: "DIA Properties", tag: "Вышивка на куртках" },
+    { image: "/assets/portfolio/prima-jacket.jpg", client: "Prima Distribution", tag: "Вышивка на толстовке" },
+    { image: "/assets/portfolio/almatyteplo-polo.jpg", client: "Алматинские тепловые сети", tag: "Вышивка на поло и кепке" },
+  ],
   seoText: `<h3>Вышивка логотипа на одежде в Алматы и Казахстане</h3>
 <p>Компания ZERO PRINT предлагает профессиональную машинную вышивку логотипов и изображений на корпоративной одежде. Мы работаем с компаниями по всему Казахстану — от Алматы и Астаны до Шымкента, Актобе и Атырау.</p>
 <p>Машинная вышивка — один из самых долговечных и статусных способов нанесения логотипа. В отличие от печати, вышивка не выцветает, не трескается и сохраняет презентабельный вид более 10 лет. Это идеальное решение для корпоративной формы, спецодежды и представительских подарков.</p>

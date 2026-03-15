@@ -28,6 +28,7 @@ export interface ServiceConfig {
   faq: { q: string; a: string }[];
   seoText?: string;
   breadcrumbName: string;
+  gallery?: { image: string; client: string; tag?: string }[];
 }
 
 export default function ServiceLanding({ config }: { config: ServiceConfig }) {
@@ -477,6 +478,35 @@ export default function ServiceLanding({ config }: { config: ServiceConfig }) {
           </div>
         </div>
       </section>
+
+      {config.gallery && config.gallery.length > 0 && (
+        <section className="py-20 bg-white" data-testid="section-gallery">
+          <div className="container mx-auto px-4">
+            <div className="mb-12">
+              <h2 className="text-3xl md:text-4xl font-black font-heading uppercase tracking-tight text-primary mb-3">
+                Наши работы
+              </h2>
+              <div className="w-12 h-1 bg-accent" />
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+              {config.gallery.map((item, i) => (
+                <div key={i} className="group relative overflow-hidden rounded-xl aspect-[3/4] bg-gray-100" data-testid={`gallery-item-${i}`}>
+                  <img
+                    src={item.image}
+                    alt={item.client}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                    <p className="text-white font-bold text-sm leading-tight">{item.client}</p>
+                    {item.tag && <span className="text-white/70 text-xs">{item.tag}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {config.seoText && (
         <section className="py-16 bg-gray-50" data-testid="section-seo-text">
