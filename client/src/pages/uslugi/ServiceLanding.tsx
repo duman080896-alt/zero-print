@@ -133,10 +133,10 @@ export default function ServiceLanding({ config }: { config: ServiceConfig }) {
         <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }} />
 
         <div className="container relative z-10 mx-auto px-4 py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className={config.hero.heroImage ? "grid grid-cols-1 lg:grid-cols-2 gap-12 items-center" : "max-w-3xl mx-auto"}>
 
-            <div>
-              <nav className="text-sm text-blue-300 mb-8 animate-fadeInUp" data-testid="breadcrumbs">
+            <div className={!config.hero.heroImage ? "text-center" : ""}>
+              <nav className={`text-sm text-blue-300 mb-8 animate-fadeInUp ${!config.hero.heroImage ? "justify-center flex flex-wrap gap-1" : ""}`} data-testid="breadcrumbs">
                 <Link href="/" className="hover:text-white transition-colors">Главная</Link>
                 <span className="mx-2 opacity-50">/</span>
                 <span className="text-blue-200">Услуги</span>
@@ -148,7 +148,7 @@ export default function ServiceLanding({ config }: { config: ServiceConfig }) {
                 {config.hero.badge}
               </span>
 
-              <h1 className="text-4xl md:text-5xl lg:text-[3.2rem] font-bold font-heading mb-6 leading-tight animate-fadeInUp-delay-1" data-testid="hero-h1">
+              <h1 className={`font-bold font-heading mb-6 leading-tight animate-fadeInUp-delay-1 ${config.hero.heroImage ? "text-4xl md:text-5xl lg:text-[3.2rem]" : "text-4xl md:text-5xl lg:text-6xl"}`} data-testid="hero-h1">
                 {config.hero.h1}
               </h1>
 
@@ -158,14 +158,14 @@ export default function ServiceLanding({ config }: { config: ServiceConfig }) {
 
               <div className="space-y-3 mb-10 animate-fadeInUp-delay-2">
                 {config.hero.benefits.map((b, i) => (
-                  <div key={i} className="flex items-start gap-3 text-base" data-testid={`hero-benefit-${i}`}>
+                  <div key={i} className={`flex items-start gap-3 text-base ${!config.hero.heroImage ? "justify-center" : ""}`} data-testid={`hero-benefit-${i}`}>
                     <span className="text-[#25D366] text-lg mt-0.5 flex-shrink-0">✓</span>
                     <span className="text-blue-50">{b}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 animate-fadeInUp-delay-3">
+              <div className={`flex flex-col sm:flex-row gap-3 animate-fadeInUp-delay-3 ${!config.hero.heroImage ? "justify-center" : ""}`}>
                 <a
                   href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Здравствуйте! Хочу получить расчёт стоимости (${config.formServiceName}).`)}`}
                   target="_blank"
