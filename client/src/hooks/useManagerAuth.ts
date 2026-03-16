@@ -5,6 +5,7 @@ interface ManagerData {
   name: string;
   email: string;
   phone?: string;
+  isAdmin?: boolean;
 }
 
 export function useManagerAuth() {
@@ -41,5 +42,5 @@ export function useManagerAuth() {
     return localStorage.getItem("manager_token");
   }, []);
 
-  return { manager, loading, login, logout, getToken, isAuthenticated: !!manager };
+  return { manager, loading, login, logout, getToken, isAuthenticated: !!manager, isAdmin: !!manager?.isAdmin };
 }

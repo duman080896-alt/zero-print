@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
 import { useManagerAuth } from "@/hooks/useManagerAuth";
 
-type Tab = "kp" | "clients" | "orders" | "subscribers" | "settings";
+type Tab = "kp" | "clients" | "orders" | "subscribers" | "settings" | "analytics";
 
 const STATUS_LABELS: Record<string, string> = {
   new: "Новый",
@@ -16,7 +16,7 @@ const STATUSES = ["new", "processing", "ready", "delivered", "cancelled"];
 
 export default function ManagerDashboard() {
   const [, setLocation] = useLocation();
-  const { manager, isAuthenticated, loading: authLoading, getToken, logout } = useManagerAuth();
+  const { manager, isAuthenticated, loading: authLoading, getToken, logout, isAdmin } = useManagerAuth();
   const [tab, setTab] = useState<Tab>("kp");
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -28,6 +28,16 @@ export default function ManagerDashboard() {
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileMsg, setProfileMsg] = useState("");
   const photoInputRef = useRef<HTMLInputElement>(null);
+
+  // Analytics state
+  const [ga4Id, setGa4Id] = useState("");
+  const [gtmId, setGtmId] = useState("");
+  const [metaPixelId, setMetaPixelId] = useState("");
+  const [yandexId, setYandexId] = useState("");
+  const [customHead, setCustomHead] = useState("");
+  const [analyticsSaving, setAnalyticsSaving] = useState(false);
+  const [analyticsMsg, setAnalyticsMsg] = useState("");
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -49,13 +59,29 @@ export default function ManagerDashboard() {
     }
   }, [isAuthenticated, tab, getToken]);
 
+  useEffect(() => {
+    if (isAuthenticated && tab === "analytics" && isAdmin) {
+      setAnalyticsLoading(true);
+      fetch("/api/admin/settings", { headers: { Authorization: `Bearer ${getToken()}` } })
+        .then((r) => r.json())
+        .then((d) => {
+          setGa4Id(d.ga4Id || "");
+          setGtmId(d.gtmId || "");
+          setMetaPixelId(d.metaPixelId || "");
+          setYandexId(d.yandexId || "");
+          setCustomHead(d.customHead || "");
+        })
+        .catch(() => {})
+        .finally(() => setAnalyticsLoading(false));
+    }
+  }, [isAuthenticated, tab, isAdmin, getToken]);
+
   const fetchData = useCallback(async () => {
-    const endpoints: Record<Tab, string> = {
+    const endpoints: Partial<Record<Tab, string>> = {
       kp: "/api/manager/proposals",
       clients: "/api/manager/clients",
       orders: "/api/manager/orders",
       subscribers: "/api/manager/subscribers",
-      settings: "",
     };
     const url = endpoints[tab];
     if (!url) return;
@@ -70,7 +96,7 @@ export default function ManagerDashboard() {
   }, [tab, getToken]);
 
   useEffect(() => {
-    if (isAuthenticated && tab !== "settings") {
+    if (isAuthenticated && tab !== "settings" && tab !== "analytics") {
       fetchData();
     }
   }, [isAuthenticated, tab, fetchData]);
@@ -126,15 +152,38 @@ export default function ManagerDashboard() {
     }
   };
 
+  const handleAnalyticsSave = async () => {
+    setAnalyticsSaving(true);
+    setAnalyticsMsg("");
+    try {
+      const res = await fetch("/api/admin/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
+        body: JSON.stringify({ ga4Id: ga4Id.trim(), gtmId: gtmId.trim(), metaPixelId: metaPixelId.trim(), yandexId: yandexId.trim(), customHead: customHead.trim() }),
+      });
+      if (res.ok) {
+        setAnalyticsMsg("✓ Настройки аналитики сохранены. Коды активны на всех страницах.");
+      } else {
+        setAnalyticsMsg("Ошибка сохранения");
+      }
+    } catch {
+      setAnalyticsMsg("Ошибка сохранения");
+    } finally {
+      setAnalyticsSaving(false);
+      setTimeout(() => setAnalyticsMsg(""), 5000);
+    }
+  };
+
   if (authLoading) return null;
   if (!isAuthenticated) return null;
 
-  const tabs: { key: Tab; label: string }[] = [
+  const tabs: { key: Tab; label: string; adminOnly?: boolean }[] = [
     { key: "kp", label: "КП" },
     { key: "clients", label: "Клиенты" },
     { key: "orders", label: "Заказы" },
     { key: "subscribers", label: "Подписчики" },
     { key: "settings", label: "Настройки" },
+    { key: "analytics", label: "Аналитика", adminOnly: true },
   ];
 
   const sidebarStyle: React.CSSProperties = {
@@ -176,17 +225,37 @@ export default function ManagerDashboard() {
     boxSizing: "border-box",
   };
 
+  const fieldLabelStyle: React.CSSProperties = {
+    display: "block",
+    fontSize: 13,
+    fontWeight: 600,
+    color: "#0a1628",
+    marginBottom: 4,
+  };
+
+  const fieldHintStyle: React.CSSProperties = {
+    fontSize: 11,
+    color: "#9ca3af",
+    marginBottom: 8,
+    display: "block",
+  };
+
   return (
     <div data-testid="manager-dashboard" style={{ display: "flex", minHeight: "100vh" }}>
       <aside style={sidebarStyle}>
         <div data-testid="text-sidebar-logo" style={{ padding: "0 24px 24px", fontSize: 18, fontWeight: 700, borderBottom: "1px solid rgba(255,255,255,0.1)", marginBottom: 8 }}>
           ZERO PRINT Manager
         </div>
-        {tabs.map((t) => (
-          <button key={t.key} data-testid={`button-tab-${t.key}`} style={tabBtnStyle(tab === t.key)} onClick={() => setTab(t.key)}>
-            {t.label}
-          </button>
-        ))}
+        {tabs
+          .filter((t) => !t.adminOnly || isAdmin)
+          .map((t) => (
+            <button key={t.key} data-testid={`button-tab-${t.key}`} style={tabBtnStyle(tab === t.key)} onClick={() => setTab(t.key)}>
+              {t.label}
+              {t.adminOnly && (
+                <span style={{ fontSize: 10, background: "#E8500A", color: "#fff", borderRadius: 3, padding: "1px 5px", marginLeft: 6, fontWeight: 700 }}>ADMIN</span>
+              )}
+            </button>
+          ))}
       </aside>
 
       <main style={{ flex: 1, padding: 32, background: "#f8f9fb" }}>
@@ -405,6 +474,146 @@ export default function ManagerDashboard() {
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Analytics tab — admin only */}
+        {tab === "analytics" && isAdmin && (
+          <div data-testid="tab-analytics">
+            <h2 style={{ fontSize: 22, fontWeight: 700, color: "#0a1628", marginBottom: 6 }}>Аналитика и пиксели</h2>
+            <p style={{ fontSize: 14, color: "#6b7280", marginBottom: 28 }}>
+              Коды, введённые здесь, автоматически загружаются на все страницы сайта.
+            </p>
+
+            {analyticsLoading ? (
+              <p>Загрузка настроек...</p>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 680 }}>
+
+                {/* GA4 */}
+                <div style={{ background: "#fff", borderRadius: 8, padding: 24, boxShadow: "0 1px 4px rgba(0,0,0,0.07)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                    <span style={{ fontSize: 24 }}>📊</span>
+                    <div>
+                      <div style={{ fontWeight: 700, color: "#0a1628", fontSize: 15 }}>Google Analytics 4</div>
+                      <div style={{ fontSize: 12, color: "#9ca3af" }}>Отслеживание трафика и поведения пользователей</div>
+                    </div>
+                  </div>
+                  <label style={fieldLabelStyle}>Measurement ID</label>
+                  <span style={fieldHintStyle}>Формат: G-XXXXXXXXXX</span>
+                  <input
+                    data-testid="input-ga4-id"
+                    value={ga4Id}
+                    onChange={(e) => setGa4Id(e.target.value)}
+                    style={inputStyle}
+                    placeholder="G-XXXXXXXXXX"
+                  />
+                </div>
+
+                {/* GTM */}
+                <div style={{ background: "#fff", borderRadius: 8, padding: 24, boxShadow: "0 1px 4px rgba(0,0,0,0.07)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                    <span style={{ fontSize: 24 }}>🏷️</span>
+                    <div>
+                      <div style={{ fontWeight: 700, color: "#0a1628", fontSize: 15 }}>Google Tag Manager</div>
+                      <div style={{ fontSize: 12, color: "#9ca3af" }}>Централизованное управление тегами и пикселями</div>
+                    </div>
+                  </div>
+                  <label style={fieldLabelStyle}>GTM ID</label>
+                  <span style={fieldHintStyle}>Формат: GTM-XXXXXXX</span>
+                  <input
+                    data-testid="input-gtm-id"
+                    value={gtmId}
+                    onChange={(e) => setGtmId(e.target.value)}
+                    style={inputStyle}
+                    placeholder="GTM-XXXXXXX"
+                  />
+                </div>
+
+                {/* Meta Pixel */}
+                <div style={{ background: "#fff", borderRadius: 8, padding: 24, boxShadow: "0 1px 4px rgba(0,0,0,0.07)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                    <span style={{ fontSize: 24 }}>📘</span>
+                    <div>
+                      <div style={{ fontWeight: 700, color: "#0a1628", fontSize: 15 }}>Meta Pixel (Facebook)</div>
+                      <div style={{ fontSize: 12, color: "#9ca3af" }}>Отслеживание конверсий из Facebook и Instagram</div>
+                    </div>
+                  </div>
+                  <label style={fieldLabelStyle}>Pixel ID</label>
+                  <span style={fieldHintStyle}>Только цифры, пример: 1234567890123456</span>
+                  <input
+                    data-testid="input-meta-pixel-id"
+                    value={metaPixelId}
+                    onChange={(e) => setMetaPixelId(e.target.value.replace(/\D/g, ""))}
+                    style={inputStyle}
+                    placeholder="1234567890123456"
+                  />
+                </div>
+
+                {/* Yandex Metrika */}
+                <div style={{ background: "#fff", borderRadius: 8, padding: 24, boxShadow: "0 1px 4px rgba(0,0,0,0.07)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                    <span style={{ fontSize: 24 }}>🔴</span>
+                    <div>
+                      <div style={{ fontWeight: 700, color: "#0a1628", fontSize: 15 }}>Яндекс.Метрика</div>
+                      <div style={{ fontSize: 12, color: "#9ca3af" }}>Аналитика от Яндекса с картой кликов и вебвизором</div>
+                    </div>
+                  </div>
+                  <label style={fieldLabelStyle}>ID счётчика</label>
+                  <span style={fieldHintStyle}>Только цифры, пример: 12345678</span>
+                  <input
+                    data-testid="input-yandex-id"
+                    value={yandexId}
+                    onChange={(e) => setYandexId(e.target.value.replace(/\D/g, ""))}
+                    style={inputStyle}
+                    placeholder="12345678"
+                  />
+                </div>
+
+                {/* Custom head code */}
+                <div style={{ background: "#fff", borderRadius: 8, padding: 24, boxShadow: "0 1px 4px rgba(0,0,0,0.07)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                    <span style={{ fontSize: 24 }}>⚙️</span>
+                    <div>
+                      <div style={{ fontWeight: 700, color: "#0a1628", fontSize: 15 }}>Произвольный код</div>
+                      <div style={{ fontSize: 12, color: "#9ca3af" }}>Любые скрипты, пиксели, мета-теги для вставки в &lt;head&gt;</div>
+                    </div>
+                  </div>
+                  <label style={fieldLabelStyle}>Код для &lt;head&gt;</label>
+                  <span style={fieldHintStyle}>Вставьте любой HTML-код (script, meta, link и т.д.)</span>
+                  <textarea
+                    data-testid="input-custom-head"
+                    value={customHead}
+                    onChange={(e) => setCustomHead(e.target.value)}
+                    rows={6}
+                    style={{ ...inputStyle, resize: "vertical", fontFamily: "monospace", fontSize: 12, lineHeight: 1.5 }}
+                    placeholder={'<script>\n  // ваш код\n</script>'}
+                  />
+                </div>
+
+                {/* Save button */}
+                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                  <button
+                    data-testid="button-save-analytics"
+                    onClick={handleAnalyticsSave}
+                    disabled={analyticsSaving}
+                    style={{ background: "#E8500A", color: "#fff", border: "none", borderRadius: 6, padding: "12px 32px", fontSize: 15, fontWeight: 700, cursor: analyticsSaving ? "wait" : "pointer", opacity: analyticsSaving ? 0.7 : 1 }}
+                  >
+                    {analyticsSaving ? "Сохранение..." : "Сохранить настройки"}
+                  </button>
+                  {analyticsMsg && (
+                    <span data-testid="text-analytics-msg" style={{ fontSize: 13, color: analyticsMsg.includes("✓") ? "#16a34a" : "#dc2626" }}>
+                      {analyticsMsg}
+                    </span>
+                  )}
+                </div>
+
+                <div style={{ background: "#fef3c7", border: "1px solid #fcd34d", borderRadius: 8, padding: 16, fontSize: 13, color: "#92400e" }}>
+                  <strong>Важно:</strong> коды применяются при следующей загрузке страницы. Пустые поля — пиксель не загружается.
+                  Только пользователи с ролью <strong>admin</strong> видят этот раздел.
+                </div>
+              </div>
+            )}
           </div>
         )}
       </main>

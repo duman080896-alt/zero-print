@@ -6,7 +6,7 @@ import cron from "node-cron";
 import { syncProducts, getProducts, getProductById, ensureProductsLoaded, type Product } from "./productSync";
 import { log } from "./index";
 import { db } from "./db";
-import { clients, orders, wishlist, managers, proposals, subscribers } from "../shared/schema";
+import { clients, orders, wishlist, managers, proposals, subscribers, siteSettings } from "../shared/schema";
 import { eq, desc, and, sql } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -288,6 +288,19 @@ function requireManagerAuth(req: AuthRequest, res: Response, next: NextFunction)
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as any;
     if (decoded.role !== "manager") return res.status(403).json({ error: "Нет доступа" });
+    req.managerId = decoded.id;
+    next();
+  } catch {
+    res.status(401).json({ error: "Неверный токен" });
+  }
+}
+
+function requireAdminAuth(req: AuthRequest, res: Response, next: NextFunction) {
+  const token = req.headers.authorization?.replace("Bearer ", "");
+  if (!token) return res.status(401).json({ error: "Требуется авторизация" });
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    if (decoded.role !== "manager" || !decoded.isAdmin) return res.status(403).json({ error: "Нет доступа. Только для администратора." });
     req.managerId = decoded.id;
     next();
   } catch {
@@ -893,8 +906,8 @@ Sitemap: https://zero-promo--duman080896.replit.app/sitemap.xml`);
       const valid = await bcrypt.compare(password, mgr.passwordHash);
       if (!valid) return res.status(401).json({ error: "Неверный email или пароль" });
 
-      const token = jwt.sign({ id: mgr.id, role: "manager" }, JWT_SECRET, { expiresIn: "7d" });
-      res.json({ token, manager: { id: mgr.id, name: mgr.name, email: mgr.email, phone: mgr.phone } });
+      const token = jwt.sign({ id: mgr.id, role: "manager", isAdmin: mgr.isAdmin || false }, JWT_SECRET, { expiresIn: "7d" });
+      res.json({ token, manager: { id: mgr.id, name: mgr.name, email: mgr.email, phone: mgr.phone, isAdmin: mgr.isAdmin || false } });
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }
@@ -1059,6 +1072,43 @@ Sitemap: https://zero-promo--duman080896.replit.app/sitemap.xml`);
     } catch (e: any) {
       if (e?.name === 'AbortError') return res.status(504).send('Image timeout');
       res.status(500).send('Proxy error');
+    }
+  });
+
+  // ─── Public analytics codes (injected into <head> on all pages) ────────────
+  app.get("/api/public/analytics", async (_req, res) => {
+    try {
+      const rows = await db.select().from(siteSettings).where(eq(siteSettings.id, "analytics"));
+      if (rows.length === 0) return res.json({});
+      res.json(rows[0].data || {});
+    } catch (err: any) {
+      res.json({});
+    }
+  });
+
+  // ─── Admin: site settings (analytics/pixels) ─────────────────────────────
+  app.get("/api/admin/settings", requireAdminAuth as any, async (_req: AuthRequest, res) => {
+    try {
+      const rows = await db.select().from(siteSettings).where(eq(siteSettings.id, "analytics"));
+      if (rows.length === 0) return res.json({});
+      res.json(rows[0].data || {});
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.put("/api/admin/settings", requireAdminAuth as any, async (req: AuthRequest, res) => {
+    try {
+      const data = req.body;
+      const rows = await db.select().from(siteSettings).where(eq(siteSettings.id, "analytics"));
+      if (rows.length === 0) {
+        await db.insert(siteSettings).values({ id: "analytics", data, updatedAt: new Date() });
+      } else {
+        await db.update(siteSettings).set({ data, updatedAt: new Date() }).where(eq(siteSettings.id, "analytics"));
+      }
+      res.json({ ok: true });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
     }
   });
 

@@ -60,6 +60,7 @@ export const managers = pgTable("managers", {
   phone: text("phone"),
   photo: text("photo"),
   whatsapp: text("whatsapp"),
+  isAdmin: boolean("is_admin").default(false),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -95,4 +96,10 @@ export const productCache = pgTable("product_cache", {
   id: text("id").primaryKey(),
   data: jsonb("data"),
   syncedAt: timestamp("synced_at").defaultNow(),
+});
+
+export const siteSettings = pgTable("site_settings", {
+  id: text("id").primaryKey(),
+  data: jsonb("data").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
