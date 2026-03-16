@@ -519,6 +519,12 @@ export async function registerRoutes(
         isSale: p.isSale,
         article: p.article,
         variantCount: p.variants.length,
+        colorImages: p.variants.reduce((acc: Record<string, string>, v) => {
+          if (v.color && v.images && v.images.length > 0 && !acc[v.color]) {
+            acc[v.color] = v.images[0];
+          }
+          return acc;
+        }, {}),
       }));
 
       const brands = new Map<string, number>();
@@ -1002,20 +1008,26 @@ Sitemap: https://zero-promo--duman080896.replit.app/sitemap.xml`);
     const url = req.query.url as string;
     if (!url) return res.status(400).send('No URL');
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 8000);
       const response = await fetch(url, {
+        signal: controller.signal,
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
           'Referer': 'https://oasiscatalog.com/',
+          'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
         }
       });
+      clearTimeout(timeout);
       if (!response.ok) return res.status(404).send('Image not found');
       const contentType = response.headers.get('content-type') || 'image/jpeg';
       const buffer = await response.arrayBuffer();
       res.setHeader('Content-Type', contentType);
-      res.setHeader('Cache-Control', 'public, max-age=86400');
+      res.setHeader('Cache-Control', 'public, max-age=604800');
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.send(Buffer.from(buffer));
-    } catch (e) {
+    } catch (e: any) {
+      if (e?.name === 'AbortError') return res.status(504).send('Image timeout');
       res.status(500).send('Proxy error');
     }
   });

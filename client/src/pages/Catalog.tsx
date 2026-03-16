@@ -27,6 +27,7 @@ interface ProductCard {
   isSale: boolean;
   article: string;
   variantCount: number;
+  colorImages?: Record<string, string>;
 }
 
 interface ProductsResponse {
@@ -118,11 +119,24 @@ function CategorySidebar({ activeSlug, onSelect }: { activeSlug: string; onSelec
 
 function ProductCardComponent({ product }: { product: ProductCard }) {
   const [hovered, setHovered] = useState(false);
+  const [selectedColor, setSelectedColor] = useState<string>("");
+  const [imgError, setImgError] = useState(false);
   const { addItem, isInCart } = useCart();
   const inCart = isInCart(product.id);
   const maxColors = 6;
   const displayColors = product.colors.slice(0, maxColors);
   const extraColors = product.colors.length - maxColors;
+
+  const currentImage = selectedColor && product.colorImages?.[selectedColor]
+    ? product.colorImages[selectedColor]
+    : product.images[0];
+
+  const handleColorClick = (e: React.MouseEvent, color: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setImgError(false);
+    setSelectedColor(prev => prev === color ? "" : color);
+  };
 
   return (
     <Link href={`/catalog/product/${product.id}`}>
@@ -134,13 +148,20 @@ function ProductCardComponent({ product }: { product: ProductCard }) {
         onMouseLeave={() => setHovered(false)}
       >
         <div className="relative aspect-square overflow-hidden bg-gray-50">
-          {product.images[0] && (
+          {currentImage && !imgError ? (
             <img
-              src={proxyImage(product.images[0])}
+              src={proxyImage(currentImage)}
               alt={product.name}
               loading="lazy"
               className="w-full h-full object-contain p-3 transition-transform duration-300 group-hover:scale-105"
+              onError={() => setImgError(true)}
             />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-300">
+              <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
           )}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {product.isHit && <span className="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">HIT</span>}
@@ -162,14 +183,18 @@ function ProductCardComponent({ product }: { product: ProductCard }) {
               {displayColors.map((color, i) => {
                 const hex = colorNameToHex(color);
                 const light = isLightColor(hex);
+                const isActive = selectedColor === color;
                 return (
                   <span
                     key={i}
-                    className="relative w-4 h-4 rounded-full inline-block cursor-pointer group/dot"
+                    data-testid={`swatch-${product.id}-${i}`}
+                    onClick={(e) => handleColorClick(e, color)}
+                    className="relative w-4 h-4 rounded-full inline-block cursor-pointer group/dot transition-transform"
                     style={{
                       background: hex,
-                      border: `1.5px solid ${light ? '#CBD5E1' : 'transparent'}`,
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.15)',
+                      border: isActive ? `2px solid #0a1628` : `1.5px solid ${light ? '#CBD5E1' : 'transparent'}`,
+                      boxShadow: isActive ? '0 0 0 2px white, 0 0 0 3.5px #0a1628' : '0 1px 2px rgba(0,0,0,0.15)',
+                      transform: isActive ? 'scale(1.25)' : 'scale(1)',
                     }}
                   >
                     <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 bg-gray-900 text-white text-[10px] px-1.5 py-0.5 rounded whitespace-nowrap opacity-0 group-hover/dot:opacity-100 transition-opacity pointer-events-none z-10">
