@@ -900,6 +900,34 @@ Sitemap: https://zero-promo--duman080896.replit.app/sitemap.xml`);
     }
   });
 
+  app.get("/api/manager/me", requireManagerAuth as any, async (req: AuthRequest, res) => {
+    try {
+      const rows = await db.select().from(managers).where(eq(managers.id, req.managerId!));
+      if (rows.length === 0) return res.status(404).json({ error: "Не найден" });
+      const mgr = rows[0];
+      res.json({ id: mgr.id, name: mgr.name, email: mgr.email, phone: mgr.phone, photo: mgr.photo, whatsapp: mgr.whatsapp });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.put("/api/manager/profile", requireManagerAuth as any, async (req: AuthRequest, res) => {
+    try {
+      const { name, phone, whatsapp, photo } = req.body;
+      const updates: any = {};
+      if (name !== undefined) updates.name = name;
+      if (phone !== undefined) updates.phone = phone;
+      if (whatsapp !== undefined) updates.whatsapp = whatsapp;
+      if (photo !== undefined) updates.photo = photo;
+      await db.update(managers).set(updates).where(eq(managers.id, req.managerId!));
+      const rows = await db.select().from(managers).where(eq(managers.id, req.managerId!));
+      const mgr = rows[0];
+      res.json({ id: mgr.id, name: mgr.name, email: mgr.email, phone: mgr.phone, photo: mgr.photo, whatsapp: mgr.whatsapp });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   app.get("/api/manager/clients", requireManagerAuth as any, async (_req: AuthRequest, res) => {
     try {
       const rows = await db.select().from(clients).orderBy(desc(clients.createdAt));
@@ -948,6 +976,8 @@ Sitemap: https://zero-promo--duman080896.replit.app/sitemap.xml`);
         managerId: req.managerId!,
         managerName: mgr?.name || "",
         managerPhone: mgr?.phone || "",
+        managerPhoto: mgr?.photo || null,
+        managerWhatsapp: mgr?.whatsapp || null,
         title: title || "Коммерческое предложение",
         clientId: clientId || null,
         clientName: clientName || "",

@@ -58,6 +58,8 @@ export const managers = pgTable("managers", {
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
   phone: text("phone"),
+  photo: text("photo"),
+  whatsapp: text("whatsapp"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -66,6 +68,8 @@ export const proposals = pgTable("proposals", {
   managerId: text("manager_id").notNull(),
   managerName: text("manager_name"),
   managerPhone: text("manager_phone"),
+  managerPhoto: text("manager_photo"),
+  managerWhatsapp: text("manager_whatsapp"),
   clientId: text("client_id"),
   title: text("title"),
   clientName: text("client_name"),
