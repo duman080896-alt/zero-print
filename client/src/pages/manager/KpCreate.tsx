@@ -97,6 +97,34 @@ export default function KpCreate() {
     setSearchResults([]);
   };
 
+  const compressImage = (file: File, maxBytes = 900_000): Promise<string> =>
+    new Promise((resolve) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const canvas = document.createElement("canvas");
+        let { width, height } = img;
+        const MAX_DIM = 1200;
+        if (width > MAX_DIM || height > MAX_DIM) {
+          const scale = MAX_DIM / Math.max(width, height);
+          width = Math.round(width * scale);
+          height = Math.round(height * scale);
+        }
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d")!.drawImage(img, 0, 0, width, height);
+        let quality = 0.85;
+        let result = canvas.toDataURL("image/jpeg", quality);
+        while (result.length > maxBytes && quality > 0.3) {
+          quality -= 0.1;
+          result = canvas.toDataURL("image/jpeg", quality);
+        }
+        resolve(result);
+      };
+      img.src = url;
+    });
+
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (svcPhotos.length + files.length > 3) {
@@ -104,11 +132,9 @@ export default function KpCreate() {
       return;
     }
     files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setSvcPhotos((prev) => [...prev, ev.target?.result as string]);
-      };
-      reader.readAsDataURL(file);
+      compressImage(file).then((data) => {
+        setSvcPhotos((prev) => [...prev, data]);
+      });
     });
     if (photoInputRef.current) photoInputRef.current.value = "";
   };
