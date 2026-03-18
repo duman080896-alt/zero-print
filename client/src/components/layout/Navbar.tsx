@@ -79,6 +79,14 @@ const uslugiItems = [
   { icon: "🎁", label: "Брендирование сувениров", href: "/uslugi/brendirovanie", desc: "Нанесение логотипа на сувениры" },
 ];
 
+const nicheItems = [
+  { icon: "🍽️", label: "HoReCa", href: "/uslugi/horeca", desc: "Рестораны, отели, кафе" },
+  { icon: "🏗️", label: "Строительство", href: "/uslugi/stroitelstvo", desc: "Спецодежда для строителей" },
+  { icon: "🏫", label: "Школы и образование", href: "/uslugi/shkoly", desc: "Форма для учебных заведений" },
+  { icon: "💻", label: "IT и офис", href: "/uslugi/it-ofis", desc: "Мерч для команды" },
+  { icon: "🏭", label: "Производство", href: "/uslugi/proizvodstvo", desc: "Спецодежда для заводов" },
+];
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [location, setLocation] = useLocation();
@@ -408,8 +416,15 @@ export default function Navbar() {
                   </button>
                   {mobileExpanded === "uslugi" && (
                     <div className="pl-4 border-l border-gray-200 space-y-1">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider pt-1 pb-0.5">Услуги</p>
                       {uslugiItems.map(item => (
                         <Link key={item.label} href={item.href} className="flex items-center gap-2 text-sm text-gray-600 py-1.5 hover:text-gray-900" onClick={() => setIsOpen(false)} data-testid={`mobile-uslugi-${item.label}`}>
+                          <span>{item.icon}</span> {item.label}
+                        </Link>
+                      ))}
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider pt-2 pb-0.5">По нишам</p>
+                      {nicheItems.map(item => (
+                        <Link key={item.label} href={item.href} className="flex items-center gap-2 text-sm text-gray-600 py-1.5 hover:text-gray-900" onClick={() => setIsOpen(false)} data-testid={`mobile-niche-${item.label}`}>
                           <span>{item.icon}</span> {item.label}
                         </Link>
                       ))}
@@ -525,23 +540,48 @@ export default function Navbar() {
               <ChevronDown className="h-3.5 w-3.5" />
             </button>
             {activeDropdown === "uslugi" && (
-              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-xl z-50 p-4 min-w-[300px]" data-testid="dropdown-uslugi">
-                <div className="space-y-0.5">
-                  {uslugiItems.map(item => (
-                    <Link
-                      key={item.label}
-                      href={item.href}
-                      className="flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-colors"
-                      onClick={() => setActiveDropdown(null)}
-                      data-testid={`dropdown-uslugi-${item.label}`}
-                    >
-                      <span className="text-lg mt-0.5">{item.icon}</span>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{item.label}</p>
-                        <p className="text-xs text-gray-400">{item.desc}</p>
-                      </div>
-                    </Link>
-                  ))}
+              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-xl z-50 p-4 min-w-[560px]" data-testid="dropdown-uslugi">
+                <div className="grid grid-cols-2 gap-x-4">
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 mb-1.5">Услуги</p>
+                    <div className="space-y-0.5">
+                      {uslugiItems.map(item => (
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          className="flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-colors"
+                          onClick={() => setActiveDropdown(null)}
+                          data-testid={`dropdown-uslugi-${item.label}`}
+                        >
+                          <span className="text-lg mt-0.5">{item.icon}</span>
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">{item.label}</p>
+                            <p className="text-xs text-gray-400">{item.desc}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border-l border-gray-100 pl-4">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 mb-1.5">По нишам</p>
+                    <div className="space-y-0.5">
+                      {nicheItems.map(item => (
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          className="flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-colors"
+                          onClick={() => setActiveDropdown(null)}
+                          data-testid={`dropdown-niche-${item.label}`}
+                        >
+                          <span className="text-lg mt-0.5">{item.icon}</span>
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">{item.label}</p>
+                            <p className="text-xs text-gray-400">{item.desc}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

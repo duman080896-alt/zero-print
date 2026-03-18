@@ -18,6 +18,11 @@ import Vyshivka from "@/pages/uslugi/Vyshivka";
 import Pechat from "@/pages/uslugi/Pechat";
 import PoshivUslugi from "@/pages/uslugi/PoshivUslugi";
 import Brendirovanie from "@/pages/uslugi/Brendirovanie";
+import Horeca from "@/pages/uslugi/Horeca";
+import Stroitelstvo from "@/pages/uslugi/Stroitelstvo";
+import Shkoly from "@/pages/uslugi/Shkoly";
+import ItOfis from "@/pages/uslugi/ItOfis";
+import Proizvodstvo from "@/pages/uslugi/Proizvodstvo";
 import Cart from "@/pages/Cart";
 import AccountLogin from "@/pages/account/Login";
 import AccountRegister from "@/pages/account/Register";
@@ -107,6 +112,11 @@ function Router() {
       <Route path="/uslugi/pechat" component={Pechat} />
       <Route path="/uslugi/poshiv" component={PoshivUslugi} />
       <Route path="/uslugi/brendirovanie" component={Brendirovanie} />
+      <Route path="/uslugi/horeca" component={Horeca} />
+      <Route path="/uslugi/stroitelstvo" component={Stroitelstvo} />
+      <Route path="/uslugi/shkoly" component={Shkoly} />
+      <Route path="/uslugi/it-ofis" component={ItOfis} />
+      <Route path="/uslugi/proizvodstvo" component={Proizvodstvo} />
       <Route path="/cart" component={Cart} />
       <Route path="/kp/:id" component={KpView} />
       <Route path="/account/login" component={AccountLogin} />

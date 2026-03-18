@@ -49,6 +49,11 @@ export default function Footer() {
               <li><Link href="/uslugi/poshiv" className="hover:text-white transition-colors">Пошив одежды</Link></li>
               <li><Link href="/uslugi/brendirovanie" className="hover:text-white transition-colors">Брендирование сувениров</Link></li>
               <li><Link href="/poligrafiya" className="hover:text-white transition-colors">Полиграфия</Link></li>
+              <li><Link href="/uslugi/horeca" className="hover:text-white transition-colors">Одежда для HoReCa</Link></li>
+              <li><Link href="/uslugi/stroitelstvo" className="hover:text-white transition-colors">Спецодежда строителей</Link></li>
+              <li><Link href="/uslugi/shkoly" className="hover:text-white transition-colors">Форма для школ</Link></li>
+              <li><Link href="/uslugi/it-ofis" className="hover:text-white transition-colors">Мерч для IT и офиса</Link></li>
+              <li><Link href="/uslugi/proizvodstvo" className="hover:text-white transition-colors">Спецодежда производства</Link></li>
               <li><Link href="/catalog" className="hover:text-white transition-colors">Каталог товаров</Link></li>
             </ul>
           </div>
