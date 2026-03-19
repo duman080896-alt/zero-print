@@ -103,12 +103,26 @@ export default function NicheLanding({ config }: { config: NicheConfig }) {
         <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: config.heroPattern }} />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.35))" }} />
 
+        {/* Desktop: image pinned absolutely to right side, full section height */}
+        {config.heroImage && (
+          <div
+            className="hidden lg:flex absolute right-0 top-0 bottom-0 items-end justify-end pointer-events-none z-10"
+            style={{ width: "48%", opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateX(32px)", transition: "all 0.9s ease 0.1s" }}
+          >
+            <img
+              src={config.heroImage}
+              alt={config.h1}
+              style={{ height: "100%", width: "auto", objectFit: "contain", objectPosition: "right bottom", filter: "drop-shadow(-10px 0 40px rgba(0,0,0,0.4))" }}
+            />
+          </div>
+        )}
+
         <div className={`container relative z-10 mx-auto px-4 py-24 ${config.heroImage ? "max-w-6xl" : "max-w-4xl"}`}>
           {config.heroImage ? (
-            /* ── Two-column hero: text left, photo right ── */
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch min-h-[60vh]">
-              {/* Left: text */}
-              <div className="flex flex-col justify-center">
+            /* ── Two-column hero: text left (desktop), stacked (mobile) ── */
+            <div>
+              {/* Text block — on desktop occupies left half only */}
+              <div className="lg:w-1/2">
                 <nav className="text-sm text-blue-200 mb-8 flex gap-2 items-center flex-wrap">
                   <Link href="/" className="hover:text-white transition-colors">Главная</Link>
                   <span className="opacity-40">/</span>
@@ -152,16 +166,17 @@ export default function NicheLanding({ config }: { config: NicheConfig }) {
                   ))}
                 </div>
               </div>
-              {/* Right: hero photo */}
+
+              {/* Mobile: image inline below text */}
               <div
-                className="flex items-end justify-center lg:justify-end h-full"
-                style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateX(32px)", transition: "all 0.9s ease 0.1s" }}
+                className="lg:hidden mt-10 flex justify-center"
+                style={{ opacity: heroVisible ? 1 : 0, transition: "all 0.9s ease 0.1s" }}
               >
                 <img
                   src={config.heroImage}
                   alt={config.h1}
-                  className="max-h-[340px] lg:max-h-none lg:h-full w-auto object-contain object-bottom"
-                  style={{ filter: "drop-shadow(0 20px 60px rgba(0,0,0,0.5))" }}
+                  className="max-h-[320px] w-auto object-contain"
+                  style={{ filter: "drop-shadow(0 10px 30px rgba(0,0,0,0.5))" }}
                 />
               </div>
             </div>
