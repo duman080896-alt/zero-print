@@ -167,18 +167,7 @@ export default function NicheLanding({ config }: { config: NicheConfig }) {
                 </div>
               </div>
 
-              {/* Mobile: image inline below text */}
-              <div
-                className="lg:hidden mt-10 flex justify-center"
-                style={{ opacity: heroVisible ? 1 : 0, transition: "all 0.9s ease 0.1s" }}
-              >
-                <img
-                  src={config.heroImage}
-                  alt={config.h1}
-                  className="max-h-[320px] w-auto object-contain"
-                  style={{ filter: "drop-shadow(0 10px 30px rgba(0,0,0,0.5))" }}
-                />
-              </div>
+              {/* Mobile: image hidden (desktop-only via absolute position) */}
             </div>
           ) : (
             /* ── Single-column hero (default) ── */

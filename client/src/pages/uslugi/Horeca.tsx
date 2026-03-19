@@ -7,6 +7,7 @@ const config: NicheConfig = {
   subtitle: "Персонал без фирменной формы теряет доверие гостей. Мы создадим образ, который запомнится — стильно, практично, с вашим логотипом.",
   heroBg: "linear-gradient(135deg, #0a1628 0%, #1a2a4a 40%, #2d1b0a 100%)",
   heroPattern: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+  heroImage: "/assets/horeca-hero.png",
   seo: {
     title: "Форменная одежда для HoReCa — рестораны, отели, кафе | ZERO PRINT Казахстан",
     description: "Пошив форменной одежды для ресторанов, отелей, кафе и баров в Казахстане. Фартуки, поло, рубашки, куртки с логотипом. От 10 штук. Доставка по всему Казахстану.",
