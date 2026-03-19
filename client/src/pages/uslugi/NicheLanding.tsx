@@ -106,9 +106,9 @@ export default function NicheLanding({ config }: { config: NicheConfig }) {
         <div className={`container relative z-10 mx-auto px-4 py-24 ${config.heroImage ? "max-w-6xl" : "max-w-4xl"}`}>
           {config.heroImage ? (
             /* ── Two-column hero: text left, photo right ── */
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-end min-h-[60vh]">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch min-h-[60vh]">
               {/* Left: text */}
-              <div>
+              <div className="flex flex-col justify-center">
                 <nav className="text-sm text-blue-200 mb-8 flex gap-2 items-center flex-wrap">
                   <Link href="/" className="hover:text-white transition-colors">Главная</Link>
                   <span className="opacity-40">/</span>
@@ -154,13 +154,13 @@ export default function NicheLanding({ config }: { config: NicheConfig }) {
               </div>
               {/* Right: hero photo */}
               <div
-                className="flex items-end justify-center lg:justify-end"
+                className="flex items-end justify-center lg:justify-end h-full"
                 style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateX(32px)", transition: "all 0.9s ease 0.1s" }}
               >
                 <img
                   src={config.heroImage}
                   alt={config.h1}
-                  className="max-h-[520px] w-auto object-contain drop-shadow-2xl"
+                  className="max-h-[340px] lg:max-h-none lg:h-full w-auto object-contain object-bottom"
                   style={{ filter: "drop-shadow(0 20px 60px rgba(0,0,0,0.5))" }}
                 />
               </div>
