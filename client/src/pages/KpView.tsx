@@ -88,6 +88,32 @@ export default function KpView({ params }: { params: { id: string } }) {
   return (
     <div style={{ minHeight: "100vh", background: "#f0f2f5", padding: "24px 16px" }} data-testid="kp-view-page">
       <div style={{ maxWidth: 900, margin: "0 auto" }}>
+
+        {/* Download PDF button */}
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
+          <a
+            href={`/api/kp/${params.id}/html?autoprint=1`}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid="button-download-pdf"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: "#E8500A",
+              color: "white",
+              padding: "12px 24px",
+              borderRadius: 8,
+              fontWeight: 700,
+              fontSize: 15,
+              textDecoration: "none",
+              boxShadow: "0 2px 8px rgba(232,80,10,0.3)",
+            }}
+          >
+            ⬇️ Скачать PDF
+          </a>
+        </div>
+
         {/* Header */}
         <div
           style={{ background: "#0a1628", borderRadius: "16px 16px 0 0", padding: "40px 32px", textAlign: "center", color: "white" }}

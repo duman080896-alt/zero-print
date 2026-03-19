@@ -74,7 +74,82 @@ function sanitizeUrl(url: string | null | undefined): string {
   return '';
 }
 
-function generateKpHtml(p: any, baseUrl = ""): string {
+// Fetch an external image URL and return a base64 data URI
+async function fetchImageAsBase64(url: string): Promise<string> {
+  if (!url) return '';
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    const resp = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Referer': 'https://oasiscatalog.com/',
+        'Accept': 'image/*,*/*;q=0.8',
+      },
+    });
+    clearTimeout(timer);
+    if (!resp.ok) return '';
+    const ct = resp.headers.get('content-type') || 'image/jpeg';
+    const buf = await resp.arrayBuffer();
+    return `data:${ct};base64,${Buffer.from(buf).toString('base64')}`;
+  } catch {
+    return '';
+  }
+}
+
+// Read a local public asset (e.g. /assets/portfolio/x.jpg) as base64 data URI
+function localFileAsBase64(assetPath: string): string {
+  if (!assetPath) return '';
+  try {
+    const ext = path.extname(assetPath).toLowerCase();
+    const mime: Record<string, string> = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.gif': 'image/gif' };
+    const ct = mime[ext] || 'image/jpeg';
+    const candidates = [
+      path.join(process.cwd(), 'dist/public', assetPath),
+      path.join(process.cwd(), 'client/public', assetPath),
+    ];
+    for (const candidate of candidates) {
+      if (fs.existsSync(candidate)) {
+        const buf = fs.readFileSync(candidate);
+        return `data:${ct};base64,${buf.toString('base64')}`;
+      }
+    }
+    return '';
+  } catch {
+    return '';
+  }
+}
+
+// Build a map of url/path → base64 data URI for all images in a KP
+async function buildImageCache(p: any): Promise<Record<string, string>> {
+  const cache: Record<string, string> = {};
+  const externalUrls = new Set<string>();
+  const localPaths = new Set<string>();
+
+  const collect = (url: string | null | undefined) => {
+    if (!url) return;
+    const clean = String(url).trim();
+    if (clean.startsWith('/')) localPaths.add(clean);
+    else { const s = sanitizeUrl(clean); if (s) externalUrls.add(s); }
+  };
+
+  collect(p.clientLogoUrl);
+  collect(p.managerPhoto);
+  for (const item of (p.items || [])) {
+    collect(item.image);
+    for (const photo of (item.photos || [])) collect(photo);
+  }
+
+  await Promise.all([
+    ...Array.from(externalUrls).map(async (url) => { cache[url] = await fetchImageAsBase64(url); }),
+    ...Array.from(localPaths).map(async (lp) => { cache[lp] = localFileAsBase64(lp); }),
+  ]);
+
+  return cache;
+}
+
+function generateKpHtml(p: any, baseUrl = "", imageCache: Record<string, string> = {}, autoprint = false): string {
   const totalPrice = (p.items || []).reduce((s: number, i: any) => s + i.qty * i.price, 0);
   const validUntil = new Date(p.createdAt || new Date());
   validUntil.setDate(validUntil.getDate() + (p.validDays || 30));
@@ -129,7 +204,7 @@ function generateKpHtml(p: any, baseUrl = ""): string {
     <div class="page" style="position:relative;">
       <div class="cover-logo-zp">ZERO <span>PRINT</span></div>
       <div class="cover-page">
-        ${sanitizeUrl(p.clientLogoUrl) ? `<img src="${sanitizeUrl(p.clientLogoUrl)}" class="cover-client-logo" onerror="this.style.display='none'">` : ''}
+        ${(imageCache[p.clientLogoUrl] || sanitizeUrl(p.clientLogoUrl)) ? `<img src="${imageCache[p.clientLogoUrl] || sanitizeUrl(p.clientLogoUrl)}" class="cover-client-logo" onerror="this.style.display='none'">` : ''}
         <div class="cover-title">${escHtml(p.title) || 'Коммерческое предложение'}</div>
         <div class="cover-divider"></div>
         ${p.comment ? `<div class="cover-subtitle">${escHtml(p.comment)}</div>` : ''}
@@ -169,9 +244,13 @@ function generateKpHtml(p: any, baseUrl = ""): string {
         </div>
         <div class="product-layout">
           <div class="product-images">
-            ${sanitizeUrl(item.image) ?
-              `<img src="${baseUrl}/api/img?url=${encodeURIComponent(sanitizeUrl(item.image))}" class="main-image" onerror="this.style.background='#f8fafc'">` :
-              `<div class="main-image" style="background:#f8fafc;display:flex;align-items:center;justify-content:center;color:#d1d5db;font-size:40px;">📦</div>`}
+            ${(() => {
+              const imgKey = sanitizeUrl(item.image) || (item.photos && item.photos[0]);
+              const imgSrc = imgKey ? (imageCache[imgKey] || (sanitizeUrl(imgKey) ? `${baseUrl}/api/img?url=${encodeURIComponent(sanitizeUrl(imgKey))}` : imageCache[imgKey])) : '';
+              return imgSrc
+                ? `<img src="${imgSrc}" class="main-image" onerror="this.style.background='#f8fafc'">`
+                : `<div class="main-image" style="background:#f8fafc;display:flex;align-items:center;justify-content:center;color:#d1d5db;font-size:40px;">📦</div>`;
+            })()}
           </div>
           <div class="product-details">
             <table class="price-table">
@@ -279,21 +358,29 @@ function generateKpHtml(p: any, baseUrl = ""): string {
   ${summaryPage}
   <script>
     (function() {
-      var imgs = document.querySelectorAll('img');
-      var total = imgs.length;
-      var loaded = 0;
+      var autoprint = ${autoprint ? 'true' : 'false'};
+      var imgs = Array.from(document.querySelectorAll('img'));
       var status = document.getElementById('img-status');
-      function onLoad() {
-        loaded++;
-        if (status) status.textContent = 'Загружено ' + loaded + ' из ' + total + ' изображений';
-        if (loaded >= total && status) status.textContent = '✓ Все изображения загружены';
+      var remaining = imgs.filter(function(img) { return !img.complete; }).length;
+
+      function checkDone() {
+        remaining--;
+        if (remaining <= 0) {
+          if (status) status.textContent = '✓ Готово к печати';
+          if (autoprint) setTimeout(function() { window.print(); }, 400);
+        }
       }
-      if (total === 0) {
+
+      if (remaining === 0) {
         if (status) status.textContent = '✓ Готово к печати';
+        if (autoprint) setTimeout(function() { window.print(); }, 400);
       } else {
+        if (status) status.textContent = 'Загрузка изображений...';
         imgs.forEach(function(img) {
-          if (img.complete) { onLoad(); }
-          else { img.addEventListener('load', onLoad); img.addEventListener('error', onLoad); }
+          if (!img.complete) {
+            img.addEventListener('load', checkDone);
+            img.addEventListener('error', checkDone);
+          }
         });
       }
     })();
@@ -1179,7 +1266,9 @@ Sitemap: https://zero-promo--duman080896.replit.app/sitemap.xml`);
       const rows = await db.select().from(proposals).where(eq(proposals.id, req.params.id));
       if (rows.length === 0) return res.status(404).send("КП не найдено");
       const baseUrl = `${req.protocol}://${req.get("host")}`;
-      const html = generateKpHtml(rows[0], baseUrl);
+      const autoprint = req.query.autoprint === "1";
+      const imageCache = await buildImageCache(rows[0]);
+      const html = generateKpHtml(rows[0], baseUrl, imageCache, autoprint);
       res.setHeader("Content-Type", "text/html; charset=utf-8");
       res.send(html);
     } catch (err: any) {
