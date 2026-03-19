@@ -16,7 +16,7 @@ export interface NicheConfig {
   heroPattern: string;
   seo: { title: string; description: string; keywords: string };
   benefits: { icon: string; title: string; desc: string }[];
-  cases: { company: string; clothing: string; qty: string; result: string; emoji: string }[];
+  cases: { company: string; clothing: string; qty: string; result: string; emoji: string; image?: string }[];
   productCategory: string;
   faq: { q: string; a: string }[];
   ctaTitle: string;
@@ -197,17 +197,35 @@ export default function NicheLanding({ config }: { config: NicheConfig }) {
               <RevealSection key={i} delay={i * 100}>
                 <div
                   data-testid={`card-case-${i}`}
-                  className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 cursor-default border border-gray-100 group"
+                  className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all hover:-translate-y-1 cursor-default border border-gray-100 group overflow-hidden"
                 >
-                  <div className="text-5xl mb-5 group-hover:scale-110 transition-transform inline-block">{c.emoji}</div>
-                  <h3 className="font-bold text-[#0a1628] text-lg mb-1">{c.company}</h3>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <span className="text-xs bg-[#E8500A]/10 text-[#E8500A] font-semibold px-2.5 py-1 rounded-full">{c.clothing}</span>
-                    <span className="text-xs bg-[#0a1628]/10 text-[#0a1628] font-semibold px-2.5 py-1 rounded-full">{c.qty}</span>
+                  {c.image ? (
+                    <div className="relative overflow-hidden" style={{ height: "220px" }}>
+                      <img
+                        src={c.image}
+                        alt={c.company}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a1628]/60 to-transparent" />
+                      <div className="absolute bottom-3 left-4">
+                        <h3 className="font-bold text-white text-lg drop-shadow">{c.company}</h3>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-6 pb-0">
+                      <div className="text-5xl mb-5 group-hover:scale-110 transition-transform inline-block">{c.emoji}</div>
+                      <h3 className="font-bold text-[#0a1628] text-lg mb-1">{c.company}</h3>
+                    </div>
+                  )}
+                  <div className="p-6" style={c.image ? { paddingTop: "16px" } : { paddingTop: "0" }}>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      <span className="text-xs bg-[#E8500A]/10 text-[#E8500A] font-semibold px-2.5 py-1 rounded-full">{c.clothing}</span>
+                      <span className="text-xs bg-[#0a1628]/10 text-[#0a1628] font-semibold px-2.5 py-1 rounded-full">{c.qty}</span>
+                    </div>
+                    <p className="text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
+                      <span className="text-[#25D366] font-bold">Результат: </span>{c.result}
+                    </p>
                   </div>
-                  <p className="text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4 mt-2">
-                    <span className="text-[#25D366] font-bold">Результат: </span>{c.result}
-                  </p>
                 </div>
               </RevealSection>
             ))}
