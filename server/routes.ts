@@ -74,7 +74,7 @@ function sanitizeUrl(url: string | null | undefined): string {
   return '';
 }
 
-function generateKpHtml(p: any): string {
+function generateKpHtml(p: any, baseUrl = ""): string {
   const totalPrice = (p.items || []).reduce((s: number, i: any) => s + i.qty * i.price, 0);
   const validUntil = new Date(p.createdAt || new Date());
   validUntil.setDate(validUntil.getDate() + (p.validDays || 30));
@@ -170,7 +170,7 @@ function generateKpHtml(p: any): string {
         <div class="product-layout">
           <div class="product-images">
             ${sanitizeUrl(item.image) ?
-              `<img src="/api/img?url=${encodeURIComponent(sanitizeUrl(item.image))}" class="main-image" onerror="this.style.background='#f8fafc'">` :
+              `<img src="${baseUrl}/api/img?url=${encodeURIComponent(sanitizeUrl(item.image))}" class="main-image" onerror="this.style.background='#f8fafc'">` :
               `<div class="main-image" style="background:#f8fafc;display:flex;align-items:center;justify-content:center;color:#d1d5db;font-size:40px;">📦</div>`}
           </div>
           <div class="product-details">
@@ -253,13 +253,51 @@ function generateKpHtml(p: any): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${p.title || 'Коммерческое предложение'} — ZERO PRINT</title>
-  <style>${css}</style>
+  <title>${escHtml(p.title || 'Коммерческое предложение')} — ZERO PRINT</title>
+  <style>
+    ${css}
+    @media print { .no-print { display: none !important; } }
+    .no-print {
+      position: fixed; top: 16px; right: 16px; z-index: 999;
+      display: flex; gap: 8px;
+    }
+    .print-btn {
+      background: #111; color: white; border: none; border-radius: 6px;
+      padding: 10px 20px; font-size: 14px; font-weight: 700; cursor: pointer;
+    }
+    .print-btn:hover { background: #E8500A; }
+    #img-status { font-size: 12px; color: #6b7280; padding: 10px 0; }
+  </style>
 </head>
 <body>
+  <div class="no-print">
+    <span id="img-status">Загрузка изображений...</span>
+    <button class="print-btn" onclick="window.print()">🖨️ Печать / PDF</button>
+  </div>
   ${coverPage}
   ${productPages}
   ${summaryPage}
+  <script>
+    (function() {
+      var imgs = document.querySelectorAll('img');
+      var total = imgs.length;
+      var loaded = 0;
+      var status = document.getElementById('img-status');
+      function onLoad() {
+        loaded++;
+        if (status) status.textContent = 'Загружено ' + loaded + ' из ' + total + ' изображений';
+        if (loaded >= total && status) status.textContent = '✓ Все изображения загружены';
+      }
+      if (total === 0) {
+        if (status) status.textContent = '✓ Готово к печати';
+      } else {
+        imgs.forEach(function(img) {
+          if (img.complete) { onLoad(); }
+          else { img.addEventListener('load', onLoad); img.addEventListener('error', onLoad); }
+        });
+      }
+    })();
+  </script>
 </body>
 </html>`;
 }
@@ -403,12 +441,25 @@ export async function registerRoutes(
   app: Express
 ): Promise<Server> {
 
+  // Load products from DB cache first (fast, no network needed)
   ensureProductsLoaded()
-    .then(() => log(`Products pre-loaded from database`, "sync"))
-    .catch(err => log(`Failed to pre-load products: ${err.message}`, "sync"));
+    .then(() => {
+      const products = getProducts();
+      if (products.length > 0) {
+        log(`Products pre-loaded from database (${products.length} items) — skipping startup API sync`, "sync");
+      } else {
+        // DB cache is empty — do a one-time sync from API
+        log("DB cache empty, starting initial API sync...", "sync");
+        syncProducts().catch(err => log(`Initial sync failed: ${err.message}`, "sync"));
+      }
+    })
+    .catch(err => {
+      log(`Failed to pre-load products: ${err.message}`, "sync");
+      // If DB read failed, try API sync as fallback
+      syncProducts().catch(err2 => log(`Fallback sync failed: ${err2.message}`, "sync"));
+    });
 
-  syncProducts().catch(err => log(`Initial sync failed: ${err.message}`, "sync"));
-
+  // Cron: full sync from Oasis API once per day at 3 AM
   cron.schedule("0 3 * * *", () => {
     syncProducts().catch(err => log(`Cron sync failed: ${err.message}`, "sync"));
   });
@@ -1127,7 +1178,8 @@ Sitemap: https://zero-promo--duman080896.replit.app/sitemap.xml`);
     try {
       const rows = await db.select().from(proposals).where(eq(proposals.id, req.params.id));
       if (rows.length === 0) return res.status(404).send("КП не найдено");
-      const html = generateKpHtml(rows[0]);
+      const baseUrl = `${req.protocol}://${req.get("host")}`;
+      const html = generateKpHtml(rows[0], baseUrl);
       res.setHeader("Content-Type", "text/html; charset=utf-8");
       res.send(html);
     } catch (err: any) {
