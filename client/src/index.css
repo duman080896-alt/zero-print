@@ -206,3 +206,23 @@
 .animate-fadeInUp-delay-2 { animation: fadeInUp 0.7s ease 0.3s both; }
 .animate-fadeInUp-delay-3 { animation: fadeInUp 0.7s ease 0.45s both; }
 .animate-fadeInUp-delay-4 { animation: fadeInUp 0.7s ease 0.6s both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fadeInUp,
+  .animate-fadeInUp-delay-1,
+  .animate-fadeInUp-delay-2,
+  .animate-fadeInUp-delay-3,
+  .animate-fadeInUp-delay-4 {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .animate-gradient {
+    animation: none;
+  }
+  .animate-scroll,
+  .animate-marquee,
+  .animate-marquee-reverse {
+    animation: none;
+  }
+}

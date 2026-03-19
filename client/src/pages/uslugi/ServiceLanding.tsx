@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -41,6 +41,12 @@ export default function ServiceLanding({ config }: { config: ServiceConfig }) {
   });
   const [customQty, setCustomQty] = useState("");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [heroVisible, setHeroVisible] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setHeroVisible(true), 50);
+    return () => clearTimeout(t);
+  }, []);
 
   useSEO(config.seo.title, config.seo.description, config.seo.keywords);
 
@@ -136,7 +142,11 @@ export default function ServiceLanding({ config }: { config: ServiceConfig }) {
           <div className={config.hero.heroImage ? "grid grid-cols-1 lg:grid-cols-2 gap-12 items-center" : "max-w-3xl mx-auto"}>
 
             <div className={!config.hero.heroImage ? "text-center" : ""}>
-              <nav className={`text-sm text-blue-300 mb-8 animate-fadeInUp ${!config.hero.heroImage ? "justify-center flex flex-wrap gap-1" : ""}`} data-testid="breadcrumbs">
+              <nav
+                className={`text-sm text-blue-300 mb-8 ${!config.hero.heroImage ? "justify-center flex flex-wrap gap-1" : ""}`}
+                style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateY(20px)", transition: "opacity 0.6s ease, transform 0.6s ease" }}
+                data-testid="breadcrumbs"
+              >
                 <Link href="/" className="hover:text-white transition-colors">Главная</Link>
                 <span className="mx-2 opacity-50">/</span>
                 <span className="text-blue-200">Услуги</span>
@@ -144,19 +154,34 @@ export default function ServiceLanding({ config }: { config: ServiceConfig }) {
                 <span className="text-white">{config.breadcrumbName}</span>
               </nav>
 
-              <span className="inline-block bg-[#E8500A] text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-6 animate-fadeInUp-delay-1" data-testid="hero-badge">
+              <span
+                className="inline-block bg-[#E8500A] text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-6"
+                style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateY(20px)", transition: "opacity 0.6s ease 0.1s, transform 0.6s ease 0.1s" }}
+                data-testid="hero-badge"
+              >
                 {config.hero.badge}
               </span>
 
-              <h1 className={`font-bold font-heading mb-6 leading-tight animate-fadeInUp-delay-1 ${config.hero.heroImage ? "text-4xl md:text-5xl lg:text-[3.2rem]" : "text-4xl md:text-5xl lg:text-6xl"}`} data-testid="hero-h1">
+              <h1
+                className={`font-bold font-heading mb-6 leading-tight ${config.hero.heroImage ? "text-4xl md:text-5xl lg:text-[3.2rem]" : "text-4xl md:text-5xl lg:text-6xl"}`}
+                style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateY(24px)", transition: "opacity 0.7s ease 0.15s, transform 0.7s ease 0.15s" }}
+                data-testid="hero-h1"
+              >
                 {config.hero.h1}
               </h1>
 
-              <p className="text-xl text-blue-100 mb-8 leading-relaxed animate-fadeInUp-delay-2" data-testid="hero-subtitle">
+              <p
+                className="text-xl text-blue-100 mb-8 leading-relaxed"
+                style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateY(20px)", transition: "opacity 0.7s ease 0.25s, transform 0.7s ease 0.25s" }}
+                data-testid="hero-subtitle"
+              >
                 {config.hero.subtitle}
               </p>
 
-              <div className="space-y-3 mb-10 animate-fadeInUp-delay-2">
+              <div
+                className="space-y-3 mb-10"
+                style={{ opacity: heroVisible ? 1 : 0, transition: "opacity 0.7s ease 0.35s" }}
+              >
                 {config.hero.benefits.map((b, i) => (
                   <div key={i} className={`flex items-start gap-3 text-base ${!config.hero.heroImage ? "justify-center" : ""}`} data-testid={`hero-benefit-${i}`}>
                     <span className="text-[#25D366] text-lg mt-0.5 flex-shrink-0">✓</span>
@@ -165,7 +190,10 @@ export default function ServiceLanding({ config }: { config: ServiceConfig }) {
                 ))}
               </div>
 
-              <div className={`flex flex-col sm:flex-row gap-3 animate-fadeInUp-delay-3 ${!config.hero.heroImage ? "justify-center" : ""}`}>
+              <div
+                className={`flex flex-col sm:flex-row gap-3 ${!config.hero.heroImage ? "justify-center" : ""}`}
+                style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateY(16px)", transition: "opacity 0.7s ease 0.45s, transform 0.7s ease 0.45s" }}
+              >
                 <a
                   href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Здравствуйте! Хочу получить расчёт стоимости (${config.formServiceName}).`)}`}
                   target="_blank"
@@ -185,13 +213,19 @@ export default function ServiceLanding({ config }: { config: ServiceConfig }) {
                 </a>
               </div>
 
-              <p className="text-blue-300 text-sm flex items-center gap-2 mt-6 animate-fadeInUp-delay-4">
+              <p
+                className="text-blue-300 text-sm flex items-center gap-2 mt-6"
+                style={{ opacity: heroVisible ? 1 : 0, transition: "opacity 0.7s ease 0.55s" }}
+              >
                 <span className="text-[#25D366]">✅</span> Уже заказали: 500+ компаний
               </p>
             </div>
 
             {config.hero.heroImage && (
-              <div className="hidden lg:block animate-fadeInUp-delay-2">
+              <div
+                className="hidden lg:block"
+                style={{ opacity: heroVisible ? 1 : 0, transition: "opacity 0.9s ease 0.2s" }}
+              >
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/40 ring-1 ring-white/10">
                   <img
                     src={config.hero.heroImage}
