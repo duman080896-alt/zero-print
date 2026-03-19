@@ -14,6 +14,7 @@ export interface NicheConfig {
   subtitle: string;
   heroBg: string;
   heroPattern: string;
+  heroImage?: string;
   seo: { title: string; description: string; keywords: string };
   benefits: { icon: string; title: string; desc: string }[];
   cases: { company: string; clothing: string; qty: string; result: string; emoji: string; image?: string }[];
@@ -102,58 +103,115 @@ export default function NicheLanding({ config }: { config: NicheConfig }) {
         <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: config.heroPattern }} />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.35))" }} />
 
-        <div className="container relative z-10 mx-auto px-4 py-24 max-w-4xl">
-          <nav className="text-sm text-blue-200 mb-8 flex gap-2 items-center flex-wrap">
-            <Link href="/" className="hover:text-white transition-colors">Главная</Link>
-            <span className="opacity-40">/</span>
-            <span>Услуги</span>
-            <span className="opacity-40">/</span>
-            <span className="text-white">{config.niche}</span>
-          </nav>
-
-          <div style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateY(28px)", transition: "all 0.7s ease" }}>
-            <span className="inline-block bg-[#E8500A] text-white text-sm font-bold px-5 py-2 rounded-full mb-6 tracking-wide">
-              Корпоративная одежда • {config.niche}
-            </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6" style={{ fontFamily: "inherit" }} data-testid="hero-h1">
-              {config.h1}
-            </h1>
-            <p className="text-xl text-blue-100 mb-10 max-w-2xl leading-relaxed" data-testid="hero-subtitle">
-              {config.subtitle}
-            </p>
-          </div>
-
-          <div
-            className="flex flex-col sm:flex-row gap-4"
-            style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateY(20px)", transition: "all 0.8s ease 0.2s" }}
-          >
-            <a
-              href={wa(`Здравствуйте! Хочу получить КП на корпоративную одежду для ${config.niche}.`)}
-              target="_blank" rel="noopener noreferrer"
-              data-testid="button-hero-whatsapp"
-              className="inline-flex items-center justify-center gap-2.5 bg-[#25D366] hover:bg-[#1db954] text-white font-bold px-8 py-4 rounded-xl text-base transition-all hover:shadow-lg hover:shadow-green-900/30"
-            >
-              <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.339 0-4.508-.755-6.273-2.035l-.438-.326-3.275 1.098 1.098-3.275-.326-.438A9.935 9.935 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-              Получить КП в WhatsApp
-            </a>
-            <a
-              href="#cases"
-              className="inline-flex items-center justify-center gap-2 border border-white/40 text-white hover:bg-white/10 hover:border-white/70 font-semibold px-8 py-4 rounded-xl text-base transition-all"
-            >
-              Смотреть кейсы ↓
-            </a>
-          </div>
-
-          <div
-            className="mt-10 flex flex-wrap gap-6"
-            style={{ opacity: heroVisible ? 1 : 0, transition: "all 0.8s ease 0.4s" }}
-          >
-            {["500+ компаний", "7 лет на рынке", "Доставка по всему Казахстану", "Оплата по безналу"].map((b) => (
-              <span key={b} className="text-sm text-blue-200 flex items-center gap-1.5">
-                <span className="text-[#25D366]">✓</span> {b}
-              </span>
-            ))}
-          </div>
+        <div className={`container relative z-10 mx-auto px-4 py-24 ${config.heroImage ? "max-w-6xl" : "max-w-4xl"}`}>
+          {config.heroImage ? (
+            /* ── Two-column hero: text left, photo right ── */
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-end min-h-[60vh]">
+              {/* Left: text */}
+              <div>
+                <nav className="text-sm text-blue-200 mb-8 flex gap-2 items-center flex-wrap">
+                  <Link href="/" className="hover:text-white transition-colors">Главная</Link>
+                  <span className="opacity-40">/</span>
+                  <span>Услуги</span>
+                  <span className="opacity-40">/</span>
+                  <span className="text-white">{config.niche}</span>
+                </nav>
+                <div style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateY(28px)", transition: "all 0.7s ease" }}>
+                  <span className="inline-block bg-[#E8500A] text-white text-sm font-bold px-5 py-2 rounded-full mb-6 tracking-wide">
+                    Корпоративная одежда • {config.niche}
+                  </span>
+                  <h1 className="text-4xl md:text-5xl lg:text-5xl font-bold leading-tight mb-6" data-testid="hero-h1">
+                    {config.h1}
+                  </h1>
+                  <p className="text-xl text-blue-100 mb-10 leading-relaxed" data-testid="hero-subtitle">
+                    {config.subtitle}
+                  </p>
+                </div>
+                <div
+                  className="flex flex-col sm:flex-row gap-4"
+                  style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateY(20px)", transition: "all 0.8s ease 0.2s" }}
+                >
+                  <a
+                    href={wa(`Здравствуйте! Хочу получить КП на корпоративную одежду для ${config.niche}.`)}
+                    target="_blank" rel="noopener noreferrer"
+                    data-testid="button-hero-whatsapp"
+                    className="inline-flex items-center justify-center gap-2.5 bg-[#25D366] hover:bg-[#1db954] text-white font-bold px-8 py-4 rounded-xl text-base transition-all hover:shadow-lg hover:shadow-green-900/30"
+                  >
+                    <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.339 0-4.508-.755-6.273-2.035l-.438-.326-3.275 1.098 1.098-3.275-.326-.438A9.935 9.935 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                    Получить КП в WhatsApp
+                  </a>
+                  <a href="#cases" className="inline-flex items-center justify-center gap-2 border border-white/40 text-white hover:bg-white/10 hover:border-white/70 font-semibold px-8 py-4 rounded-xl text-base transition-all">
+                    Смотреть кейсы ↓
+                  </a>
+                </div>
+                <div className="mt-10 flex flex-wrap gap-6" style={{ opacity: heroVisible ? 1 : 0, transition: "all 0.8s ease 0.4s" }}>
+                  {["500+ компаний", "7 лет на рынке", "Доставка по Казахстану", "Оплата по безналу"].map((b) => (
+                    <span key={b} className="text-sm text-blue-200 flex items-center gap-1.5">
+                      <span className="text-[#25D366]">✓</span> {b}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              {/* Right: hero photo */}
+              <div
+                className="flex items-end justify-center lg:justify-end"
+                style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateX(32px)", transition: "all 0.9s ease 0.1s" }}
+              >
+                <img
+                  src={config.heroImage}
+                  alt={config.h1}
+                  className="max-h-[520px] w-auto object-contain drop-shadow-2xl"
+                  style={{ filter: "drop-shadow(0 20px 60px rgba(0,0,0,0.5))" }}
+                />
+              </div>
+            </div>
+          ) : (
+            /* ── Single-column hero (default) ── */
+            <>
+              <nav className="text-sm text-blue-200 mb-8 flex gap-2 items-center flex-wrap">
+                <Link href="/" className="hover:text-white transition-colors">Главная</Link>
+                <span className="opacity-40">/</span>
+                <span>Услуги</span>
+                <span className="opacity-40">/</span>
+                <span className="text-white">{config.niche}</span>
+              </nav>
+              <div style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateY(28px)", transition: "all 0.7s ease" }}>
+                <span className="inline-block bg-[#E8500A] text-white text-sm font-bold px-5 py-2 rounded-full mb-6 tracking-wide">
+                  Корпоративная одежда • {config.niche}
+                </span>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6" style={{ fontFamily: "inherit" }} data-testid="hero-h1">
+                  {config.h1}
+                </h1>
+                <p className="text-xl text-blue-100 mb-10 max-w-2xl leading-relaxed" data-testid="hero-subtitle">
+                  {config.subtitle}
+                </p>
+              </div>
+              <div
+                className="flex flex-col sm:flex-row gap-4"
+                style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "none" : "translateY(20px)", transition: "all 0.8s ease 0.2s" }}
+              >
+                <a
+                  href={wa(`Здравствуйте! Хочу получить КП на корпоративную одежду для ${config.niche}.`)}
+                  target="_blank" rel="noopener noreferrer"
+                  data-testid="button-hero-whatsapp"
+                  className="inline-flex items-center justify-center gap-2.5 bg-[#25D366] hover:bg-[#1db954] text-white font-bold px-8 py-4 rounded-xl text-base transition-all hover:shadow-lg hover:shadow-green-900/30"
+                >
+                  <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.339 0-4.508-.755-6.273-2.035l-.438-.326-3.275 1.098 1.098-3.275-.326-.438A9.935 9.935 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                  Получить КП в WhatsApp
+                </a>
+                <a href="#cases" className="inline-flex items-center justify-center gap-2 border border-white/40 text-white hover:bg-white/10 hover:border-white/70 font-semibold px-8 py-4 rounded-xl text-base transition-all">
+                  Смотреть кейсы ↓
+                </a>
+              </div>
+              <div className="mt-10 flex flex-wrap gap-6" style={{ opacity: heroVisible ? 1 : 0, transition: "all 0.8s ease 0.4s" }}>
+                {["500+ компаний", "7 лет на рынке", "Доставка по всему Казахстану", "Оплата по безналу"].map((b) => (
+                  <span key={b} className="text-sm text-blue-200 flex items-center gap-1.5">
+                    <span className="text-[#25D366]">✓</span> {b}
+                  </span>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </section>
 
