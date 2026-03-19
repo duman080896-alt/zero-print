@@ -441,6 +441,9 @@ export async function registerRoutes(
   app: Express
 ): Promise<Server> {
 
+  // API-level health check (proxied by Caddy/Nixpacks, guaranteed to reach Node.js)
+  app.get("/api/health", (_req, res) => res.status(200).json({ status: "ok" }));
+
   // Load products from DB cache first (fast, no network needed)
   ensureProductsLoaded()
     .then(() => {
