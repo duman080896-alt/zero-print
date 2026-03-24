@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /manager/
+Sitemap: https://zeroprint.kz/sitemap.xml
