@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import compression from "compression";
 import { runMigrations } from "./migrate";
 
 const app = express();
@@ -25,6 +26,7 @@ app.use(
   }),
 );
 
+app.use(compression());
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 export function log(message: string, source = "express") {

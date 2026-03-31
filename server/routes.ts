@@ -701,7 +701,7 @@ export async function registerRoutes(
 
   app.get("/sitemap.xml", (_req, res) => {
     const products = getProducts();
-    const baseUrl = "https://zero-promo--duman080896.replit.app";
+    const baseUrl = "https://zeroprint.kz";
     const today = new Date().toISOString().split("T")[0];
 
     const staticPages = [
@@ -716,7 +716,7 @@ export async function registerRoutes(
       { url: "/portfolio", priority: "0.8", freq: "monthly" },
       { url: "/about", priority: "0.6", freq: "monthly" },
       { url: "/kontakty", priority: "0.7", freq: "monthly" },
-      { url: "/cart", priority: "0.5", freq: "monthly" },
+      
       { url: "/catalog?category=futbolki", priority: "0.8", freq: "weekly" },
       { url: "/catalog?category=ruchki", priority: "0.8", freq: "weekly" },
       { url: "/catalog?category=termosy", priority: "0.8", freq: "weekly" },
@@ -758,8 +758,10 @@ ${allUrls.map(p => `  <url>
 Allow: /
 Disallow: /api/
 Disallow: /data/
+Disallow: /cart
+Disallow: /cart/
 
-Sitemap: https://zero-promo--duman080896.replit.app/sitemap.xml`);
+Sitemap: https://zeroprint.kz/sitemap.xml`);
   });
 
   app.post("/api/client/register", async (req, res) => {
