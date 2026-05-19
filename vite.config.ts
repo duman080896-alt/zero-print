@@ -39,6 +39,63 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+
+    // ✅ Разбиваем 919KB бандл на маленькие части
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // React ядро
+          "vendor-react": ["react", "react-dom"],
+
+          // UI библиотека Radix
+          "vendor-radix": [
+            "@radix-ui/react-dialog",
+            "@radix-ui/react-dropdown-menu",
+            "@radix-ui/react-select",
+            "@radix-ui/react-tabs",
+            "@radix-ui/react-accordion",
+            "@radix-ui/react-tooltip",
+            "@radix-ui/react-navigation-menu",
+            "@radix-ui/react-popover",
+            "@radix-ui/react-scroll-area",
+          ],
+
+          // Анимации (тяжёлая)
+          "vendor-framer": ["framer-motion"],
+
+          // Графики
+          "vendor-charts": ["recharts"],
+
+          // Иконки
+          "vendor-icons": ["lucide-react"],
+
+          // Работа с данными
+          "vendor-query": ["@tanstack/react-query"],
+
+          // Формы
+          "vendor-forms": ["react-hook-form", "@hookform/resolvers", "zod"],
+
+          // Утилиты
+          "vendor-utils": [
+            "clsx",
+            "tailwind-merge",
+            "class-variance-authority",
+            "date-fns",
+          ],
+        },
+      },
+    },
+
+    // ✅ Сжатие и оптимизация
+    minify: "esbuild",
+    target: "es2020",
+    chunkSizeWarningLimit: 500,
+
+    // ✅ Оптимизация CSS
+    cssMinify: true,
+
+    // ✅ Убираем sourcemaps в проде (уменьшает размер)
+    sourcemap: false,
   },
   server: {
     host: "0.0.0.0",
