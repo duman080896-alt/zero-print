@@ -29,6 +29,18 @@ app.use(
 app.use(compression());
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
+// Static asset caching — immutable for hashed assets, 1h for HTML/API responses
+app.use((req, res, next) => {
+  if (/\.(jpg|jpeg|png|gif|webp|svg|ico|woff2|woff|ttf|otf|css|js)$/i.test(req.url)) {
+    res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+  } else if (req.url.startsWith("/api/")) {
+    res.setHeader("Cache-Control", "public, max-age=60, s-maxage=60");
+  } else {
+    res.setHeader("Cache-Control", "public, max-age=3600");
+  }
+  next();
+});
+
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
     hour: "numeric",
