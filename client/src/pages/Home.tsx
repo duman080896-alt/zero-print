@@ -25,7 +25,10 @@ export default function Home() {
         <div className="absolute inset-0 z-0">
           <img 
             src="/assets/home-hero.png" 
-            alt="Корпоративный мерч" 
+            alt="Корпоративный мерч"
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
             className="w-full h-full object-cover brightness-50"
           />
         </div>
