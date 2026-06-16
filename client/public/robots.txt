@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
-Disallow: /catalog/
-
+Disallow: /api/
+Disallow: /manager/
+Disallow: /cart
+Disallow: /cart/
 Sitemap: https://zeroprint.kz/sitemap.xml
