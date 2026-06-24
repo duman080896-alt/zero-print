@@ -46,15 +46,24 @@
     .stagger.visible > *:nth-child(6){opacity:1;transform:none;transition-delay:.55s}
 
     /* ─── HEADER ─── */
-    .hdr { position:sticky; top:0; z-index:200; background:var(--white); border-bottom:1px solid var(--g100); padding:12px 32px; display:flex; align-items:center; justify-content:space-between; transition:box-shadow .3s; }
+    .hdr { position:sticky; top:0; z-index:200; background:var(--white); border-bottom:1px solid var(--g100); transition:box-shadow .3s; }
     .hdr.scrolled { box-shadow:0 4px 24px rgba(0,0,0,.1); }
-    .hdr__logo { color:var(--black); font-family:'Montserrat',sans-serif; font-weight:900; font-size:20px; text-decoration:none; letter-spacing:2px; }
+    .hdr__top { display:flex; align-items:center; gap:12px; padding:10px 32px; }
+    .hdr__logo { color:var(--black); font-family:'Montserrat',sans-serif; font-weight:900; font-size:20px; text-decoration:none; letter-spacing:2px; flex-shrink:0; }
     .hdr__logo span { background:var(--black); color:var(--white); padding:2px 6px; border-radius:3px; }
-    .hdr__right { display:flex; align-items:center; gap:16px; }
-    .hdr__phone { color:var(--black); text-decoration:none; font-weight:600; font-size:15px; transition:color .2s; }
-    .hdr__phone:hover { color:var(--g600); }
-    .hdr__wa { background:#25D366; color:#fff; padding:9px 20px; border-radius:8px; font-weight:700; font-size:14px; text-decoration:none; transition:background .2s, transform .1s; }
-    .hdr__wa:hover { background:#1EB85A; transform:translateY(-1px); }
+    .hdr__search { flex:1; }
+    .hdr__search input { width:100%; padding:9px 16px; border:1.5px solid var(--g100); border-radius:8px; font-size:14px; font-family:inherit; outline:none; color:var(--g600); background:#fff; transition:border-color .2s; }
+    .hdr__search input:focus { border-color:var(--accent); }
+    .hdr__actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+    .hdr__act-btn { display:flex; align-items:center; gap:6px; padding:9px 16px; border:1.5px solid var(--g100); border-radius:8px; font-size:14px; font-weight:500; color:var(--black); text-decoration:none; white-space:nowrap; transition:border-color .2s; }
+    .hdr__act-btn:hover { border-color:var(--g400); }
+    .hdr__wa-btn { background:#25D366; color:#fff; border-color:#25D366; font-weight:700; }
+    .hdr__wa-btn:hover { background:#1EB85A; border-color:#1EB85A; }
+    .hdr__nav { border-top:1px solid var(--g100); padding:0 24px; display:flex; gap:2px; }
+    .hdr__nav a { padding:10px 14px; font-size:14px; font-weight:500; color:var(--black); text-decoration:none; white-space:nowrap; border-radius:6px 6px 0 0; transition:background .2s; }
+    .hdr__nav a:hover { background:var(--g50); }
+    .hdr__nav a.active { color:var(--accent); font-weight:600; }
+    @media(max-width:900px){ .hdr__search{display:none;} .hdr__act-btn:not(.hdr__wa-btn){display:none;} .hdr__nav{overflow-x:auto;} }
 
     /* ─── BREADCRUMB ─── */
     .bc { background:var(--g50); border-bottom:1px solid var(--g100); padding:10px 32px; font-size:13px; color:var(--g600); }
@@ -454,11 +463,34 @@
 
 <!-- HEADER -->
 <header class="hdr" id="hdr">
-  <a href="https://zeroprint.kz" class="hdr__logo">ZERO<span>PRINT</span></a>
-  <div class="hdr__right">
-    <a href="tel:+77716246461" class="hdr__phone">+7 771 624 64 61</a>
-    <a href="https://wa.me/77716246461" class="hdr__wa" target="_blank">WhatsApp</a>
+  <div class="hdr__top">
+    <a href="https://zeroprint.kz" class="hdr__logo">ZERO<span>PRINT</span></a>
+    <form class="hdr__search" onsubmit="window.location.href='https://zeroprint.kz/catalog?q='+encodeURIComponent(this.q.value);return false;">
+      <input type="search" name="q" placeholder="Поиск: ручки, термос, футболки..." />
+    </form>
+    <div class="hdr__actions">
+      <a href="https://zeroprint.kz/login" class="hdr__act-btn">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Войти
+      </a>
+      <a href="https://zeroprint.kz/cart" class="hdr__act-btn">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Корзина
+      </a>
+      <a href="https://wa.me/77716246461" class="hdr__act-btn hdr__wa-btn" target="_blank">
+        <svg width="15" height="15" viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.813.729 5.458 2.008 7.754L0 32l8.469-2.223A15.94 15.94 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm8.258 22.037c-.343.965-2.014 1.844-2.758 1.961-.747.117-1.686.168-2.72-.172-1.045-.344-2.39-.803-4.107-1.572-3.444-1.51-5.693-5.025-5.867-5.258-.17-.233-1.39-1.85-1.39-3.527 0-1.676.878-2.5 1.19-2.839.31-.338.678-.422.904-.422.226 0 .452.002.65.012.208.011.487-.079.762.58.283.672.961 2.316 1.044 2.484.085.168.141.364.028.588-.113.226-.169.366-.338.565-.169.198-.354.442-.506.594-.169.168-.344.35-.148.688.197.338.877 1.449 1.884 2.348 1.294 1.156 2.386 1.514 2.723 1.683.338.169.535.141.732-.085.197-.226.844-.985 1.069-1.323.226-.338.452-.281.762-.169.31.113 1.966.927 2.304 1.095.338.169.563.253.646.395.085.141.085.814-.258 1.779z"/></svg>
+        WhatsApp
+      </a>
+    </div>
   </div>
+  <nav class="hdr__nav">
+    <a href="https://zeroprint.kz/catalog">Каталог</a>
+    <a href="https://zeroprint.kz/uslugi" class="active">Услуги</a>
+    <a href="https://zeroprint.kz/poligrafiya">Полиграфия</a>
+    <a href="https://zeroprint.kz/portfolio">Портфолио</a>
+    <a href="https://zeroprint.kz/about">О нас</a>
+    <a href="https://zeroprint.kz/contacts">Контакты</a>
+  </nav>
 </header>
 
 <!-- BREADCRUMB -->
