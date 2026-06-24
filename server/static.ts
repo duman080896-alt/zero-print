@@ -62,6 +62,7 @@ export function serveStatic(app: Express) {
     next();
   });
 
+  app.get("/uslugi/vyshivka", (req, res) => { res.redirect(301, "/uslugi/vyshivka/"); });
   app.use(express.static(distPath, {
     maxAge: "1y",
     etag: true,
