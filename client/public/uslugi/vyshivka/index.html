@@ -112,7 +112,18 @@
     .mob-sub-link:hover { background:var(--g100); }
     .mob-sub-link.current { color:var(--accent); font-weight:600; }
 
-    @media(max-width:900px){ .hdr__search{display:none;} .hdr__act-btn:not(.hdr__wa-btn){display:none;} .hdr__nav{display:none;} .hdr__burger{display:flex;} .drop-menu{min-width:300px; grid-template-columns:1fr;} }
+    @media(max-width:900px){
+      .hdr__top { padding:10px 16px; flex-wrap:wrap; gap:8px; }
+      .hdr__logo { flex:1; }
+      .hdr__search { order:3; width:100%; flex-basis:100%; }
+      .hdr__actions { gap:4px; }
+      .hdr__wa-btn { display:none !important; }
+      .hdr__act-btn { padding:9px; border-color:transparent; background:transparent; font-size:0; }
+      .hdr__act-btn svg { display:block; }
+      .hdr__burger { display:flex; }
+      .hdr__nav { display:none; }
+      .drop-menu { min-width:300px; grid-template-columns:1fr; }
+    }
 
     /* ─── BREADCRUMB ─── */
     .bc { background:var(--g50); border-bottom:1px solid var(--g100); padding:10px 32px; font-size:13px; color:var(--g600); }
