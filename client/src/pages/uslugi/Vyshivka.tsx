@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import ServiceLanding, { type ServiceConfig } from "./ServiceLanding";
 
 const config: ServiceConfig = {
@@ -66,6 +65,5 @@ const config: ServiceConfig = {
 };
 
 export default function Vyshivka() {
-  useEffect(() => { window.location.href = "/uslugi/vyshivka"; }, []);
-  return null;
+  return <ServiceLanding config={config} />;
 }

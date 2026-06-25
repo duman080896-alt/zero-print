@@ -47,7 +47,6 @@ export function serveStatic(app: Express) {
     throw new Error(`Could not find the build directory: ${distPath}, make sure to build the client first`);
   }
 
-  // ✅ WebP: автоматически отдаём WebP когда браузер поддерживает
   app.use((req, res, next) => {
     const acceptsWebP = req.headers.accept?.includes("image/webp");
     if (!acceptsWebP) return next();
@@ -62,7 +61,6 @@ export function serveStatic(app: Express) {
     next();
   });
 
-  app.get("/uslugi/vyshivka", (req, res) => { res.sendFile(path.resolve(distPath, "uslugi/vyshivka/index.html")); });
   app.use(express.static(distPath, {
     maxAge: "1y",
     etag: true,
