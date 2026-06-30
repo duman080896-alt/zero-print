@@ -1,0 +1,103 @@
+/* === FONTS === */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800;900&display=swap');
+
+/* === SCROLL REVEAL === */
+.reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.reveal.visible { opacity: 1; transform: none; }
+
+.stagger > * {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.stagger.visible > *:nth-child(1) { opacity: 1; transform: none; transition-delay: 0.05s; }
+.stagger.visible > *:nth-child(2) { opacity: 1; transform: none; transition-delay: 0.15s; }
+.stagger.visible > *:nth-child(3) { opacity: 1; transform: none; transition-delay: 0.25s; }
+.stagger.visible > *:nth-child(4) { opacity: 1; transform: none; transition-delay: 0.35s; }
+.stagger.visible > *:nth-child(5) { opacity: 1; transform: none; transition-delay: 0.45s; }
+.stagger.visible > *:nth-child(6) { opacity: 1; transform: none; transition-delay: 0.55s; }
+
+/* === ANIMATIONS === */
+@keyframes dotsMove {
+  from { background-position: 0 0; }
+  to { background-position: 36px 36px; }
+}
+@keyframes floatShape {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-24px) scale(1.04); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes tagPop {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes waFloat {
+  0%, 100% { box-shadow: 0 4px 24px rgba(37,211,102,0.5); }
+  50% { box-shadow: 0 4px 32px rgba(37,211,102,0.8), 0 0 0 10px rgba(37,211,102,0.1); }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(249,115,22,0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(249,115,22,0); }
+}
+
+/* === HERO SPECIFIC === */
+.hero-dots {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px);
+  background-size: 36px 36px;
+  animation: dotsMove 20s linear infinite;
+}
+.hero-shape {
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  animation: floatShape 8s ease-in-out infinite;
+}
+
+/* === HERO TEXT ENTRANCE === */
+.hero-tag { animation: tagPop 0.6s ease both 0.2s; }
+.hero-h1  { animation: slideUp 0.7s ease both 0.35s; }
+.hero-sub { animation: slideUp 0.7s ease both 0.5s; }
+.hero-checks { animation: slideUp 0.7s ease both 0.6s; }
+.hero-stats { animation: slideUp 0.7s ease both 0.7s; }
+.hero-cta { animation: slideUp 0.7s ease both 0.85s; }
+.hero-gift { animation: slideUp 0.7s ease both 1s; }
+
+/* === GIFT PULSE === */
+.gift-pulse {
+  animation: pulseGlow 2.5s ease-in-out infinite;
+  animation-delay: 1.2s;
+}
+
+/* === WA FLOAT BUTTON === */
+.wa-float {
+  animation: waFloat 3s ease-in-out infinite;
+}
+
+/* === FAQ TRANSITION === */
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s;
+  padding: 0 24px;
+}
+.faq-answer.open {
+  max-height: 320px;
+  padding: 0 24px 20px;
+}
+.faq-icon {
+  transition: transform 0.25s;
+}
+.faq-icon.open {
+  transform: rotate(45deg);
+}
+
+/* === COMPARISON TABLE HIGHLIGHT === */
+.cmp-highlight td:first-child {
+  border-left: 3px solid #F97316;
+}
