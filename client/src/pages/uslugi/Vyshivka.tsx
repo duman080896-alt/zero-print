@@ -17,6 +17,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import "./Vyshivka.css";
+import Navbar from "@/components/Navbar";
 
 const PHONE = "77716246461";
 const wa = (msg: string) =>
@@ -252,18 +253,11 @@ const PRODUCTS = [
 
 // ───────────────────────────────────────────────────────────────────────────
 export default function Vyshivka() {
-  const [scrolled, setScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [statsVisible, setStatsVisible] = useState(false);
   const statsRef = useRef<HTMLDivElement>(null);
 
   useScrollReveal();
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     const el = statsRef.current;
@@ -301,72 +295,25 @@ export default function Vyshivka() {
     <>
       <div className="font-sans text-[#0F172A] bg-white overflow-x-hidden">
         {/* ── HEADER ─────────────────────────────────────────────────── */}
-        <header
-          className={`sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-6 lg:px-12 py-4 flex items-center justify-between transition-shadow duration-300 ${scrolled ? "shadow-sm" : ""}`}
-        >
-          <a
-            href="https://zeroprint.kz"
-            className="font-black text-xl tracking-widest no-underline text-[#0F1F3D]"
-            style={{ fontFamily: "Montserrat, sans-serif" }}
-          >
-            ZERO
-            <span className="bg-[#0F1F3D] text-white px-1.5 py-0.5 rounded-sm ml-0.5">
-              PRINT
-            </span>
-          </a>
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-500">
-            <a
-              href="#portfolio"
-              className="hover:text-[#0F1F3D] transition-colors no-underline"
-            >
-              Портфолио
-            </a>
-            <a
-              href="#pricing"
-              className="hover:text-[#0F1F3D] transition-colors no-underline"
-            >
-              Цены
-            </a>
-            <a
-              href="#faq"
-              className="hover:text-[#0F1F3D] transition-colors no-underline"
-            >
-              FAQ
-            </a>
-          </nav>
-          <div className="flex items-center gap-3">
-            <a
-              href="tel:+77716246461"
-              className="text-[#0F1F3D] font-semibold text-sm hidden sm:block hover:text-orange-500 transition-colors no-underline"
-            >
-              +7 771 624 64 61
-            </a>
-            <a
-              href="#form"
-              className="bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm px-5 py-2.5 rounded-lg transition-colors no-underline"
-            >
-              Расчёт цены
-            </a>
-          </div>
-        </header>
+        <Navbar />
 
         {/* ── BREADCRUMB ─────────────────────────────────────────────── */}
-        <div className="bg-[#0F1F3D] px-6 lg:px-12 py-2.5 text-xs text-white/50 flex items-center gap-1.5">
+        <div className="bg-gray-50 border-b border-gray-100 px-6 lg:px-12 py-2.5 text-xs text-gray-400 flex items-center gap-1.5">
           <a
-            href="https://zeroprint.kz"
-            className="text-white/50 hover:text-white/80 no-underline transition-colors"
+            href="/"
+            className="hover:text-gray-700 no-underline transition-colors"
           >
             Главная
           </a>
           <span>/</span>
           <a
-            href="https://zeroprint.kz/uslugi"
-            className="text-white/50 hover:text-white/80 no-underline transition-colors"
+            href="/uslugi"
+            className="hover:text-gray-700 no-underline transition-colors"
           >
             Услуги
           </a>
           <span>/</span>
-          <span className="text-white/90">Вышивка на одежде</span>
+          <span className="text-gray-700 font-medium">Вышивка на одежде</span>
         </div>
 
         {/* ── HERO ───────────────────────────────────────────────────── */}
