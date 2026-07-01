@@ -17,7 +17,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import "./Vyshivka.css";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/layout/Navbar";
 
 const PHONE = "77716246461";
 const wa = (msg: string) =>
