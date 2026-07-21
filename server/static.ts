@@ -81,8 +81,9 @@ export function serveStatic(app: Express) {
   const htmlTemplate = fs.readFileSync(htmlPath, "utf-8");
 
   app.use("/{*path}", (req, res) => {
-    const meta = getMetaForPath(req.path, req.query ? new URLSearchParams(req.query as any).toString() : "");
-    const noindex = /^\/(kp|cart|account|manager|landing)/.test(req.path);
+    const u = new URL(req.originalUrl || "/", "http://local");
+    const meta = getMetaForPath(u.pathname, u.searchParams.toString());
+    const noindex = /^\/(kp|cart|account|manager|landing)/.test(u.pathname);
     let result = htmlTemplate
       .replace(/<title>.*?<\/title>/, `<title>${meta.title}</title>`)
       .replace(/<meta name="description" content=".*?"/, `<meta name="description" content="${meta.description}"`)
