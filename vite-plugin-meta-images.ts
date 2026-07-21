@@ -56,19 +56,8 @@ export function metaImagesPlugin(): Plugin {
 }
 
 function getDeploymentUrl(): string | null {
-  if (process.env.REPLIT_INTERNAL_APP_DOMAIN) {
-    const url = `https://${process.env.REPLIT_INTERNAL_APP_DOMAIN}`;
-    log('[meta-images] using internal app domain:', url);
-    return url;
-  }
-
-  if (process.env.REPLIT_DEV_DOMAIN) {
-    const url = `https://${process.env.REPLIT_DEV_DOMAIN}`;
-    log('[meta-images] using dev domain:', url);
-    return url;
-  }
-
-  return null;
+  // Продакшен-домен сайта; можно переопределить переменной SITE_URL
+  return process.env.SITE_URL || "https://zeroprint.kz";
 }
 
 function log(...args: any[]): void {

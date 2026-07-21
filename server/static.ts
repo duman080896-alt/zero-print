@@ -38,6 +38,11 @@ function getMetaForPath(urlPath: string, query: string): { title: string; descri
   if (urlPath === "/about") return { title: "О компании ZERO PRINT — корпоративный мерч Алматы", description: "ZERO PRINT — производство корпоративного мерча и брендированной продукции в Алматы.", canonical: `${base}/about` };
   if (urlPath === "/kontakty") return { title: "Контакты ZERO PRINT — Алматы, телефон, адрес, WhatsApp", description: "Адрес: ул. Радостовца 152/6, офис 104, Алматы. Телефон: +7 771 624 64 61.", canonical: `${base}/kontakty` };
   if (urlPath.startsWith("/catalog/product/")) return { title: "Корпоративный мерч с логотипом | ZERO PRINT Алматы", description: "Брендированная продукция на заказ в Алматы. Нанесение логотипа, доставка по Казахстану.", canonical: `${base}${urlPath}` };
+  if (urlPath === "/uslugi/horeca") return { title: "Форма и мерч для ресторанов и HoReCa в Алматы | ZERO PRINT", description: "Фартуки, поло, кепки с логотипом для ресторанов, кафе, отелей. Вышивка и печать. Алматы.", canonical: `${base}/uslugi/horeca` };
+  if (urlPath === "/uslugi/stroitelstvo") return { title: "Спецодежда с логотипом для строителей в Алматы | ZERO PRINT", description: "Жилеты, куртки, комбинезоны с вышивкой логотипа. Спецодежда для стройкомпаний. Казахстан.", canonical: `${base}/uslugi/stroitelstvo` };
+  if (urlPath === "/uslugi/shkoly") return { title: "Школьная форма с логотипом в Казахстане | ZERO PRINT", description: "Пошив школьной формы с эмблемой школы. Вышивка, печать. Доставка по Казахстану.", canonical: `${base}/uslugi/shkoly` };
+  if (urlPath === "/uslugi/it-ofis") return { title: "Корпоративный мерч для IT и офиса в Алматы | ZERO PRINT", description: "Худи, футболки, мерч для IT-команд и офисов. DTF печать, вышивка. От 1 шт. Алматы.", canonical: `${base}/uslugi/it-ofis` };
+  if (urlPath === "/uslugi/proizvodstvo") return { title: "Спецодежда для производства с логотипом | ZERO PRINT", description: "Брендированная спецодежда для заводов и производств. Вышивка. Доставка по Казахстану.", canonical: `${base}/uslugi/proizvodstvo` };
   return { title: "Корпоративный мерч и печать на одежде в Алматы | ZERO PRINT", description: "Печать на футболках, худи, кепках в Алматы. DTF, термопечать, вышивка. От 1 шт. Доставка по Казахстану.", canonical: `${base}${urlPath}` };
 }
 
@@ -72,23 +77,22 @@ export function serveStatic(app: Express) {
     },
   }));
 
+  const htmlPath = path.resolve(distPath, "index.html");
+  const htmlTemplate = fs.readFileSync(htmlPath, "utf-8");
+
   app.use("/{*path}", (req, res) => {
-    const userAgent = req.headers["user-agent"] || "";
-    const htmlPath = path.resolve(distPath, "index.html");
-    if (isBot(userAgent)) {
-      const html = fs.readFileSync(htmlPath, "utf-8");
-      const meta = getMetaForPath(req.path, req.query ? new URLSearchParams(req.query as any).toString() : "");
-      const result = html
-        .replace(/<title>.*?<\/title>/, `<title>${meta.title}</title>`)
-        .replace(/<meta name="description" content=".*?"/, `<meta name="description" content="${meta.description}"`)
-        .replace(/<link rel="canonical" href=".*?"/, `<link rel="canonical" href="${meta.canonical}"`)
-        .replace(/<meta property="og:title" content=".*?"/, `<meta property="og:title" content="${meta.title}"`)
-        .replace(/<meta property="og:description" content=".*?"/, `<meta property="og:description" content="${meta.description}"`)
-        .replace(/<meta property="og:url" content=".*?"/, `<meta property="og:url" content="${meta.canonical}"`);
-      res.setHeader("Cache-Control", "no-cache");
-      res.setHeader("Content-Type", "text/html; charset=utf-8");
-      return res.send(result);
-    }
-    res.sendFile(htmlPath);
+    const meta = getMetaForPath(req.path, req.query ? new URLSearchParams(req.query as any).toString() : "");
+    const noindex = /^\/(kp|cart|account|manager|landing)/.test(req.path);
+    let result = htmlTemplate
+      .replace(/<title>.*?<\/title>/, `<title>${meta.title}</title>`)
+      .replace(/<meta name="description" content=".*?"/, `<meta name="description" content="${meta.description}"`)
+      .replace(/<link rel="canonical" href=".*?"/, `<link rel="canonical" href="${meta.canonical}"`)
+      .replace(/<meta property="og:title" content=".*?"/, `<meta property="og:title" content="${meta.title}"`)
+      .replace(/<meta property="og:description" content=".*?"/, `<meta property="og:description" content="${meta.description}"`)
+      .replace(/<meta property="og:url" content=".*?"/, `<meta property="og:url" content="${meta.canonical}"`);
+    if (noindex) result = result.replace("</head>", '<meta name="robots" content="noindex,nofollow" />\n</head>');
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.send(result);
   });
 }
