@@ -756,8 +756,14 @@ ${allUrls.map(p => `  <url>
     res.type("text/plain");
     res.send(`User-agent: *
 Allow: /
+# Публичные данные каталога: без них Google видит каталог, карточки и отраслевые страницы пустыми
+Allow: /api/products
+Allow: /api/img
+Allow: /api/public/
+# Остальное API (админка, менеджеры, клиенты, КП) закрыто
 Disallow: /api/
 Disallow: /data/
+Disallow: /manager/
 Disallow: /cart
 Disallow: /cart/
 

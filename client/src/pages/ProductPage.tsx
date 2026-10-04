@@ -406,7 +406,7 @@ export default function ProductPage() {
                     <span>Другие города</span><span className="font-medium text-gray-900">3-7 дней</span>
                   </div>
                 </div>
-                <p className="text-sm text-gray-500">Работаем от 1 штуки. Оптовые скидки при заказе от 50 шт.</p>
+                <p className="text-sm text-gray-500">Работаем от 10 штук. Оптовые скидки при заказе от 50 шт.</p>
               </div>
             )}
           </div>

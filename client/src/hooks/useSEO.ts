@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-
-const CANONICAL_BASE = "https://zeroprint.kz";
+import { useLocation, useSearch } from "wouter";
+import { getMetaForPath } from "@shared/seoMeta";
 
 function setMetaTag(attr: string, key: string, content: string) {
   let el = document.querySelector(`meta[${attr}="${key}"]`) as HTMLMetaElement | null;
@@ -22,20 +22,30 @@ function setCanonical(href: string) {
   el.setAttribute("href", href);
 }
 
-export function useSEO(title: string, description: string, keywords?: string, canonicalPath?: string) {
+// Для страниц, которые описаны в shared/seoMeta.ts, title, description и canonical
+// берутся оттуда — тем же правилом, что использует сервер. Иначе после загрузки JS
+// мета-теги расходились с серверными: пропадал город, canonical категорий уходил на /catalog.
+// Аргументы title/description применяются только к страницам вне этой карты
+// (корзина, КП, лендинги — они и так закрыты от индексации).
+export function useSEO(title: string, description: string, keywords?: string, _canonicalPath?: string) {
+  const [location] = useLocation();
+  const search = useSearch();
+
   useEffect(() => {
-    document.title = title;
-    setMetaTag("name", "description", description);
+    const meta = getMetaForPath(window.location.pathname, search);
+    const finalTitle = meta.matched ? meta.title : title;
+    const finalDescription = meta.matched ? meta.description : description;
+
+    document.title = finalTitle;
+    setMetaTag("name", "description", finalDescription);
     if (keywords) {
       setMetaTag("name", "keywords", keywords);
     }
-    setMetaTag("property", "og:title", title);
-    setMetaTag("property", "og:description", description);
-    setMetaTag("name", "twitter:title", title);
-    setMetaTag("name", "twitter:description", description);
-
-    // Canonical — prevents duplicate content across replit.app and zeroprint.kz
-    const path = canonicalPath ?? window.location.pathname;
-    setCanonical(CANONICAL_BASE + path);
-  }, [title, description, keywords, canonicalPath]);
+    setMetaTag("property", "og:title", finalTitle);
+    setMetaTag("property", "og:description", finalDescription);
+    setMetaTag("property", "og:url", meta.canonical);
+    setMetaTag("name", "twitter:title", finalTitle);
+    setMetaTag("name", "twitter:description", finalDescription);
+    setCanonical(meta.canonical);
+  }, [location, search, title, description, keywords]);
 }

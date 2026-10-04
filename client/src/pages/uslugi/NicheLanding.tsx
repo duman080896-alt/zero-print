@@ -159,7 +159,7 @@ export default function NicheLanding({ config }: { config: NicheConfig }) {
                   </a>
                 </div>
                 <div className="mt-10 flex flex-wrap gap-6" style={{ opacity: heroVisible ? 1 : 0, transition: "all 0.8s ease 0.4s" }}>
-                  {["500+ компаний", "7 лет на рынке", "Доставка по Казахстану", "Оплата по безналу"].map((b) => (
+                  {["500+ компаний", "5+ лет на рынке", "Доставка по Казахстану", "Оплата по безналу"].map((b) => (
                     <span key={b} className="text-sm text-blue-200 flex items-center gap-1.5">
                       <span className="text-[#25D366]">✓</span> {b}
                     </span>
@@ -208,7 +208,7 @@ export default function NicheLanding({ config }: { config: NicheConfig }) {
                 </a>
               </div>
               <div className="mt-10 flex flex-wrap gap-6" style={{ opacity: heroVisible ? 1 : 0, transition: "all 0.8s ease 0.4s" }}>
-                {["500+ компаний", "7 лет на рынке", "Доставка по всему Казахстану", "Оплата по безналу"].map((b) => (
+                {["500+ компаний", "5+ лет на рынке", "Доставка по всему Казахстану", "Оплата по безналу"].map((b) => (
                   <span key={b} className="text-sm text-blue-200 flex items-center gap-1.5">
                     <span className="text-[#25D366]">✓</span> {b}
                   </span>

@@ -15,7 +15,7 @@ const formSchema = z.object({
   message: z.string().min(10, "Сообщение должно содержать минимум 10 символов"),
 });
 
-export default function LeadForm({ title = "Рассчитать стоимость", description = "Заполните форму, и мы свяжемся с вами в течение 24 часов." }) {
+export default function LeadForm({ title = "Рассчитать стоимость", description = "Заполните форму — ответим в течение 3 минут в рабочее время." }) {
   const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
