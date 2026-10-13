@@ -65,11 +65,11 @@ function useCounter(target: number, active: boolean) {
 const FAQS = [
   {
     q: "Сколько стоит вышивка логотипа на одежде?",
-    a: "Цена зависит от тиража, сложности логотипа и количества цветов. Ориентировочно: от 1 500 ₸ за изделие при заказе 1–49 шт, от 500 ₸ при тираже 50–499 шт и от 350 ₸ при заказе от 500 шт. Точную стоимость рассчитываем по вашему макету за 30 минут.",
+    a: "Цена зависит от тиража, сложности логотипа и количества цветов. Ориентировочно: от 1 500 ₸ за изделие при заказе 10–49 шт, от 500 ₸ при тираже 50–499 шт и от 350 ₸ при заказе от 500 шт. Точную стоимость рассчитываем по вашему макету за 30 минут.",
   },
   {
     q: "От какого количества можно заказать вышивку?",
-    a: "От 1 штуки — минимального тиража нет. Одно изделие удобно для образца или замены, большие партии — со скидкой до 30%.",
+    a: "От 10 штук. Оптовый тираж — от 50 штук, большие партии — со скидкой до 30%.",
   },
   {
     q: "Сколько времени занимает изготовление?",
@@ -112,12 +112,12 @@ const FAQS = [
 // ─── Pricing card data ──────────────────────────────────────────────────────
 const PRICING = [
   {
-    type: '1–49 штук',
+    type: '10–49 штук',
     price: 'от 1 500 ₸',
-    unit: 'за изделие · без минимального тиража',
+    unit: 'за изделие · тираж от 10 шт',
     hot: false,
     items: [
-      'Образцы, шевроны, малые партии',
+      'Шевроны, малые партии',
       'Плоская и 3D-вышивка',
       'Оцифровка логотипа от 5 000 ₸',
       'Срок: 5–7 рабочих дней',
@@ -255,7 +255,7 @@ export default function Vyshivka() {
                 одежде в Алматы
               </h1>
               <p className="text-white/60 text-lg mb-6 leading-relaxed">
-                От 1 штуки — без минимального тиража.<br className="hidden sm:block" />
+                Тираж от 10 штук, опт — от 50 штук.<br className="hidden sm:block" />
                 Срок от 3 рабочих дней.
               </p>
 
@@ -317,7 +317,7 @@ export default function Vyshivka() {
           <div className="max-w-7xl mx-auto flex justify-center gap-6 lg:gap-12 flex-wrap">
             {[
               { icon: <ShieldIcon />, text: 'Своё производство' },
-              { icon: <BoxIcon />, text: 'От 1 штуки' },
+              { icon: <BoxIcon />, text: 'От 10 штук' },
               { icon: <TruckIcon />, text: 'Доставка по Казахстану' },
               { icon: <ClockIcon />, text: 'Срок от 3 дней' },
               { icon: <CheckCircleIcon />, text: 'Контроль качества' },
@@ -585,7 +585,7 @@ export default function Vyshivka() {
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Количество</label>
                     <select className="px-4 py-3 border border-gray-200 rounded-xl text-sm outline-none focus:border-orange-500 transition-all text-gray-700">
-                      {['1–49', '50–199', '200–499', '500–1000', '1000+'].map(v => <option key={v}>{v}</option>)}
+                      {['10–49', '50–199', '200–499', '500–1000', '1000+'].map(v => <option key={v}>{v}</option>)}
                     </select>
                   </div>
                 </div>

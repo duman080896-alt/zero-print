@@ -84,7 +84,7 @@ export default function TrustedBy() {
         <div className="flex justify-center gap-10 mt-10">
           {[
             { num: '500+', label: 'компаний' },
-            { num: '5 лет', label: 'на рынке' },
+            { num: '5+ лет', label: 'на рынке' },
             { num: '15 000+', label: 'заказов' },
           ].map((s, i) => (
             <div key={i} className="text-center">

@@ -6,7 +6,7 @@ import { useSEO } from "@/hooks/useSEO";
 import { ChevronDown } from "lucide-react";
 
 const WHATSAPP_NUMBER = "77716246461";
-const BASE_URL = "https://zero-promo--duman080896.replit.app";
+import { SITE_URL as BASE_URL, BUSINESS_ID } from "@shared/site";
 
 const printTypes = [
   { emoji: "📇", name: "Визитки", price: "от 5 000 ₸", unit: "за 100 шт", desc: "Матовые, глянцевые, Soft Touch" },
@@ -78,16 +78,7 @@ export default function Poligrafiya() {
     name: "Полиграфия на заказ",
     alternateName: ["Печать визиток", "Листовки оптом", "Баннеры Алматы"],
     description: "Полный цикл полиграфических услуг: визитки, листовки, буклеты, баннеры, календари, упаковка. Работаем с юридическими лицами по всему Казахстану.",
-    provider: {
-      "@type": "LocalBusiness",
-      name: "ZERO PRINT",
-      telephone: "+77716246461",
-      email: "zeroprint.kz@gmail.com",
-      address: { "@type": "PostalAddress", streetAddress: "ул. Радостовца 152/6, офис 104", addressLocality: "Алматы", addressRegion: "Алматы", addressCountry: "KZ" },
-      geo: { "@type": "GeoCoordinates", latitude: 43.2220, longitude: 76.8512 },
-      openingHours: "Mo-Fr 09:00-18:00",
-      priceRange: "$$",
-    },
+    provider: { "@id": BUSINESS_ID },
     areaServed: [
       { "@type": "City", name: "Алматы" }, { "@type": "City", name: "Астана" },
       { "@type": "City", name: "Шымкент" }, { "@type": "City", name: "Актобе" },
@@ -200,7 +191,7 @@ export default function Poligrafiya() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
               { value: "500+", label: "компаний" },
-              { value: "7 лет", label: "на рынке" },
+              { value: "5+ лет", label: "на рынке" },
               { value: "от 1 дня", label: "срок печати" },
               { value: "12 городов", label: "доставка" },
             ].map((s, i) => (
@@ -407,7 +398,7 @@ export default function Poligrafiya() {
         <div className="container mx-auto px-4 max-w-xl">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold font-heading mb-3 text-[#0a1628]">Рассчитайте стоимость прямо сейчас</h2>
-            <p className="text-gray-500">Бесплатный расчёт • Ответим за 15 минут • Без обязательств</p>
+            <p className="text-gray-500">Бесплатный расчёт • Ответим за 3 минуты • Без обязательств</p>
           </div>
           <form onSubmit={handleFormSubmit} className="bg-white rounded-2xl p-8 shadow-sm border space-y-5">
             <div>
@@ -528,7 +519,7 @@ export default function Poligrafiya() {
       <section className="py-16 bg-[#0a1628] text-white" data-testid="section-cta-final">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4">Готовы обсудить ваш заказ?</h2>
-          <p className="text-gray-400 text-lg mb-8">Напишите нам — ответим за 15 минут</p>
+          <p className="text-gray-400 text-lg mb-8">Напишите нам — ответим за 3 минуты</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a href={buildWhatsAppUrl("Здравствуйте! Хочу обсудить заказ полиграфии.")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 bg-[#25D366] text-white px-8 py-4 rounded-xl text-lg font-bold hover:bg-[#20bd5a] transition-colors" data-testid="cta-whatsapp">
               📱 Написать в WhatsApp

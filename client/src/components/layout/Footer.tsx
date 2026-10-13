@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { COMPANY } from "@shared/site";
 
 export default function Footer() {
   return (
@@ -85,16 +86,19 @@ export default function Footer() {
               <div className="flex items-start gap-3 text-gray-400">
                 <span className="text-base shrink-0 mt-0.5">💬</span>
                 <div>
-                  <div className="text-xs text-gray-500">WhatsApp (заказы)</div>
-                  <a href="https://wa.me/77716246461" target="_blank" rel="noopener noreferrer" className="text-white font-semibold hover:text-[#E8500A] transition-colors">
-                    +7 771 624 64 61
+                  <div className="text-xs text-gray-500">Основной номер</div>
+                  <a href={`tel:${COMPANY.phones.main.tel}`} className="text-white font-semibold hover:text-[#E8500A] transition-colors">
+                    {COMPANY.phones.main.display}
+                  </a>
+                  <a href={`https://wa.me/${COMPANY.whatsapp}`} target="_blank" rel="noopener noreferrer" className="block text-xs text-[#25D366] hover:text-white transition-colors">
+                    Написать в WhatsApp
                   </a>
                 </div>
               </div>
               <div className="flex items-start gap-3 text-gray-400">
                 <Phone className="h-5 w-5 text-accent shrink-0 mt-0.5" />
                 <div>
-                  <div className="text-xs text-gray-500">Звонки</div>
+                  <div className="text-xs text-gray-500">Отдел продаж</div>
                   <a href="tel:+77001584039" className="text-white font-semibold hover:text-[#E8500A] transition-colors">
                     +7 700 158 40 39
                   </a>
@@ -106,7 +110,10 @@ export default function Footer() {
               </div>
               <div className="flex items-start gap-3 text-gray-400">
                 <span className="text-base shrink-0">🕐</span>
-                <span>Пн-Пт: 9:00 — 18:00</span>
+                <div>
+                  <div>{COMPANY.hours.weekdays}</div>
+                  <div>{COMPANY.hours.saturday}</div>
+                </div>
               </div>
             </div>
           </div>

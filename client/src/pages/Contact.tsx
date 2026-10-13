@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { useSEO } from "@/hooks/useSEO";
+import { COMPANY, RESPONSE_LABEL } from "@shared/site";
 
 const WHATSAPP_NUMBER = "77716246461";
 
@@ -22,46 +23,15 @@ export default function Contact() {
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank");
   };
 
-  const schemaLocalBusiness = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: "ZERO PRINT",
-    description: "Брендирование одежды, корпоративные сувениры, полиграфия и пошив на заказ в Казахстане",
-    telephone: "+77001584039",
-    url: "https://zero-promo--duman080896.replit.app",
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "ул. Радостовца 152/6, офис 104",
-      addressLocality: "Алматы",
-      addressRegion: "Алматы",
-      postalCode: "050059",
-      addressCountry: "KZ",
-    },
-    geo: { "@type": "GeoCoordinates", latitude: 43.2220, longitude: 76.8512 },
-    openingHoursSpecification: [{
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "09:00",
-      closes: "18:00",
-    }],
-    contactPoint: [
-      { "@type": "ContactPoint", telephone: "+77001584039", contactType: "customer service", availableLanguage: ["Russian", "Kazakh"] },
-      { "@type": "ContactPoint", telephone: "+77716246461", contactType: "sales", availableLanguage: ["Russian", "Kazakh"] },
-    ],
-    sameAs: ["https://wa.me/77716246461", "https://instagram.com/zeroprint.kz"],
-  };
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaLocalBusiness) }} />
-
       <section className="bg-[#0a1628] text-white py-16" data-testid="section-hero">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold font-heading mb-4" data-testid="hero-h1">Свяжитесь с нами</h1>
+          <h1 className="text-4xl md:text-5xl font-bold font-heading mb-4" data-testid="hero-h1">Контакты ZERO PRINT в Алматы</h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Ответим за 15 минут и рассчитаем стоимость вашего заказа
+            Ответим за {RESPONSE_LABEL} и рассчитаем стоимость вашего заказа
           </p>
         </div>
       </section>
@@ -76,7 +46,7 @@ export default function Contact() {
                     <span className="text-2xl">💬</span>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 mb-1">WhatsApp (заказы)</p>
+                    <p className="text-xs text-gray-400 mb-1">Основной номер · WhatsApp</p>
                     <p className="font-bold text-lg text-[#0a1628]">+7 771 624 64 61</p>
                     <a
                       href="https://wa.me/77716246461"
@@ -86,6 +56,13 @@ export default function Contact() {
                       data-testid="button-whatsapp"
                     >
                       Написать →
+                    </a>
+                    <a
+                      href={`tel:${COMPANY.phones.main.tel}`}
+                      className="inline-flex items-center gap-2 mt-3 ml-2 border border-[#25D366] text-[#128C4A] px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-[#25D366]/10 transition-colors"
+                      data-testid="button-phone-main"
+                    >
+                      Позвонить →
                     </a>
                   </div>
                 </div>
@@ -97,7 +74,7 @@ export default function Contact() {
                     <span className="text-2xl">📞</span>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 mb-1">Звонки</p>
+                    <p className="text-xs text-gray-400 mb-1">Отдел продаж</p>
                     <p className="font-bold text-lg text-[#0a1628]">+7 700 158 40 39</p>
                     <a
                       href="tel:+77001584039"
@@ -120,7 +97,7 @@ export default function Contact() {
                     <p className="font-bold text-[#0a1628]">г. Алматы, ул. Радостовца 152/6</p>
                     <p className="text-gray-500">офис 104</p>
                     <a
-                      href="https://maps.google.com/?q=Алматы+Радостовца+152/6"
+                      href={`https://www.google.com/maps/search/?api=1&query=${COMPANY.geo.latitude},${COMPANY.geo.longitude}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 mt-3 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
@@ -139,8 +116,9 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-xs text-gray-400 mb-1">Часы работы</p>
-                    <p className="font-bold text-[#0a1628]">Пн-Пт: 9:00 — 18:00</p>
-                    <p className="text-gray-500 text-sm">Сб-Вс: выходной</p>
+                    <p className="font-bold text-[#0a1628]">{COMPANY.hours.weekdays}</p>
+                    <p className="font-bold text-[#0a1628]">{COMPANY.hours.saturday}</p>
+                    <p className="text-gray-500 text-sm">{COMPANY.hours.sunday}</p>
                   </div>
                 </div>
               </div>
@@ -149,7 +127,7 @@ export default function Contact() {
             <div>
               <div className="rounded-xl overflow-hidden shadow-sm border border-gray-100 mb-4">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2906.123!2d76.8512!3d43.2220!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z0YPQuy4g0KDQsNC00L7RgdGC0L7QstGG0LAgMTUyLzYg0JDQu9C80LDRgtGL!5e0!3m2!1sru!2skz!4v1234567890"
+                  src={`https://maps.google.com/maps?q=${COMPANY.geo.latitude},${COMPANY.geo.longitude}&z=17&hl=ru&output=embed`}
                   width="100%"
                   height="400"
                   style={{ border: 0 }}
@@ -160,7 +138,7 @@ export default function Contact() {
                 />
               </div>
               <a
-                href="https://maps.google.com/?q=Алматы+Радостовца+152/6"
+                href={`https://www.google.com/maps/search/?api=1&query=${COMPANY.geo.latitude},${COMPANY.geo.longitude}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#E8500A] transition-colors"
@@ -177,7 +155,7 @@ export default function Contact() {
         <div className="container mx-auto px-4 max-w-xl">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold font-heading mb-4 text-[#0a1628]">Оставьте заявку</h2>
-            <p className="text-gray-500">Перезвоним или напишем в WhatsApp в течение 15 минут</p>
+            <p className="text-gray-500">Перезвоним или напишем в WhatsApp в течение {COMPANY.responseMinutes} минут</p>
           </div>
           <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 shadow-sm border space-y-5">
             <div>

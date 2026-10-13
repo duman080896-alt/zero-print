@@ -1,7 +1,7 @@
 export const SEO_MAP: Record<string, { title: string; desc: string }> = {
   futbolki: {
     title: "Футболки с логотипом в Казахстане | ZERO PRINT",
-    desc: "Брендированные футболки с нанесением логотипа. От 1 шт.",
+    desc: "Брендированные футболки с нанесением логотипа. От 10 шт.",
   },
   ruchki: {
     title: "Ручки с логотипом на заказ | ZERO PRINT",

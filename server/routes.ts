@@ -702,17 +702,20 @@ export async function registerRoutes(
   app.get("/sitemap.xml", (_req, res) => {
     const products = getProducts();
     const baseUrl = "https://zeroprint.kz";
-    const today = new Date().toISOString().split("T")[0];
 
     const staticPages = [
       { url: "/", priority: "1.0", freq: "weekly" },
       { url: "/catalog", priority: "0.9", freq: "daily" },
-      { url: "/poshiv", priority: "0.9", freq: "monthly" },
       { url: "/poligrafiya", priority: "0.9", freq: "monthly" },
       { url: "/uslugi/vyshivka", priority: "0.9", freq: "monthly" },
       { url: "/uslugi/pechat", priority: "0.9", freq: "monthly" },
       { url: "/uslugi/poshiv", priority: "0.9", freq: "monthly" },
       { url: "/uslugi/brendirovanie", priority: "0.9", freq: "monthly" },
+      { url: "/uslugi/horeca", priority: "0.8", freq: "monthly" },
+      { url: "/uslugi/stroitelstvo", priority: "0.8", freq: "monthly" },
+      { url: "/uslugi/proizvodstvo", priority: "0.8", freq: "monthly" },
+      { url: "/uslugi/it-ofis", priority: "0.8", freq: "monthly" },
+      { url: "/uslugi/shkoly", priority: "0.8", freq: "monthly" },
       { url: "/portfolio", priority: "0.8", freq: "monthly" },
       { url: "/about", priority: "0.6", freq: "monthly" },
       { url: "/kontakty", priority: "0.7", freq: "monthly" },
@@ -742,7 +745,6 @@ export async function registerRoutes(
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${allUrls.map(p => `  <url>
     <loc>${baseUrl}${p.url}</loc>
-    <lastmod>${today}</lastmod>
     <changefreq>${p.freq}</changefreq>
     <priority>${p.priority}</priority>
   </url>`).join("\n")}
@@ -756,8 +758,14 @@ ${allUrls.map(p => `  <url>
     res.type("text/plain");
     res.send(`User-agent: *
 Allow: /
+# Публичные данные каталога: без них Google видит каталог, карточки и отраслевые страницы пустыми
+Allow: /api/products
+Allow: /api/img
+Allow: /api/public/
+# Остальное API (админка, менеджеры, клиенты, КП) закрыто
 Disallow: /api/
 Disallow: /data/
+Disallow: /manager/
 Disallow: /cart
 Disallow: /cart/
 
