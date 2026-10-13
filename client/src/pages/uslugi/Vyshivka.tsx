@@ -44,8 +44,10 @@ function useScrollReveal() {
 }
 
 // ─── Animated counter hook ──────────────────────────────────────────────────
+// Начальное значение — итоговое число: поисковик и пользователь без JS-анимации
+// видят «500+», а не «0 компаний». Анимация с нуля запускается при появлении блока.
 function useCounter(target: number, active: boolean) {
-  const [value, setValue] = useState(0)
+  const [value, setValue] = useState(target)
   useEffect(() => {
     if (!active) return
     const duration = 1800
@@ -277,7 +279,7 @@ export default function Vyshivka() {
                 {[
                   { value: c500 >= 500 ? '500+' : String(c500), label: 'компаний' },
                   { value: c5m >= 5000000 ? '5M+' : c5m >= 1000000 ? `${Math.round(c5m / 1000000)}M` : String(c5m), label: 'изделий' },
-                  { value: c5 >= 5 ? '5' : String(c5), label: 'лет в Казахстане' },
+                  { value: c5 >= 5 ? '5+' : String(c5), label: 'лет в Казахстане' },
                 ].map(({ value, label }) => (
                   <div key={label}>
                     <div className="text-3xl font-black text-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>{value}</div>
@@ -504,7 +506,7 @@ export default function Vyshivka() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 stagger">
               {[
-                { n: '01', title: 'Заявка', text: 'Заполните форму или напишите в WhatsApp — ответим за 30 минут.' },
+                { n: '01', title: 'Заявка', text: 'Заполните форму или напишите в WhatsApp — ответим за 3 минуты.' },
                 { n: '02', title: 'Макет', text: 'Оцифруем логотип, подберём цвета нитей, пришлём макет.' },
                 { n: '03', title: 'Производство', text: 'Запускаем тираж с контролем качества. Срок от 3 дней.' },
                 { n: '04', title: 'Доставка', text: 'Доставляем по Алматы или транспортной компанией по Казахстану.' },

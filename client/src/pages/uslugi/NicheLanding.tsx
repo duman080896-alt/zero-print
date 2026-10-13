@@ -84,7 +84,7 @@ export default function NicheLanding({ config }: { config: NicheConfig }) {
   const wa = (text: string) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
 
   const steps = [
-    { icon: "📝", title: "Заявка", desc: "Отправьте запрос через WhatsApp или форму на сайте — ответим в течение 30 минут" },
+    { icon: "📝", title: "Заявка", desc: "Отправьте запрос через WhatsApp или форму на сайте — ответим за 3 минуты" },
     { icon: "📐", title: "Замеры и дизайн", desc: "Согласовываем размерную сетку, цвета и нанесение вашего логотипа" },
     { icon: "🏭", title: "Производство", desc: "Шьём и наносим логотип на собственном оборудовании в Алматы" },
     { icon: "🚚", title: "Доставка", desc: "Доставка по всему Казахстану транспортными компаниями или курьером" },

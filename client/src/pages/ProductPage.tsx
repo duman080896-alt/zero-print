@@ -7,6 +7,8 @@ import { catalogCategories, findCategoryById, findParentCategory } from "@/data/
 import { cn, proxyImage } from "@/lib/utils";
 import { colorNameToHex, isLightColor } from "@/lib/colors";
 import { useCart } from "@/hooks/useCart";
+import { useSEO } from "@/hooks/useSEO";
+import { getProductMeta } from "@shared/seoMeta";
 
 interface ProductVariant {
   id: string;
@@ -88,6 +90,9 @@ export default function ProductPage() {
     },
     enabled: !!product,
   });
+
+  const seo = getProductMeta(product);
+  useSEO(seo.title, seo.description);
 
   if (isLoading) {
     return (

@@ -2,7 +2,7 @@
 // и клиентом (client/src/hooks/useSEO.ts при переходах внутри SPA), поэтому
 // после загрузки JS title, description и canonical остаются теми же, что отдал сервер.
 
-import { SITE_URL } from "./site";
+import { SITE_URL, MIN_RUN_LABEL } from "./site";
 
 export type PageMeta = { title: string; description: string; canonical: string; matched: boolean };
 
@@ -61,7 +61,30 @@ export function getMetaForPath(urlPath: string, query: string): PageMeta {
   const meta = PAGE_META[aliased];
   if (meta) return { ...meta, canonical: aliased === "/" ? SITE_URL : `${SITE_URL}${aliased}`, matched: true };
 
-  if (path.startsWith("/catalog/product/")) return { ...PRODUCT_META, canonical: `${SITE_URL}${path}`, matched: true };
+  // Карточки товаров не в карте: мету строит getProductMeta по данным товара
+  // (сервер — в server/static.ts, клиент — в ProductPage).
+  if (path.startsWith("/catalog/product/")) return { ...PRODUCT_META, canonical: `${SITE_URL}${path}`, matched: false };
 
   return { ...DEFAULT_META, canonical: `${SITE_URL}${path}`, matched: false };
+}
+
+export type ProductMetaInput = { name: string; brand?: string; price?: number; brandingMethods?: string[] };
+
+function clip(s: string, max: number): string {
+  return s.length <= max ? s : s.slice(0, max - 1).replace(/[\s,.;:–—-]+\S*$/, "") + "…";
+}
+
+// Уникальные title и description карточки товара. Раньше у всех 2 000 карточек
+// из sitemap были одни и те же, и Google склеивал их как дубли.
+export function getProductMeta(p: ProductMetaInput | undefined): Meta {
+  if (!p?.name) return PRODUCT_META;
+  const name = p.name.replace(/\s+/g, " ").trim();
+  const title = `${clip(name, 48)} с логотипом в Алматы | ZERO PRINT`;
+  const parts = [`${name}${p.brand ? ` ${p.brand}` : ""} с нанесением логотипа на заказ.`];
+  if (p.price && p.price > 0) parts.push(`Цена от ${p.price.toLocaleString("ru-RU")} ₸.`);
+  parts.push(`Тираж ${MIN_RUN_LABEL}, доставка по Казахстану.`);
+  // Способы нанесения — в конце: если описание длинное, обрезается именно этот хвост.
+  const methods = (p.brandingMethods || []).slice(0, 2);
+  if (methods.length) parts.push(`Нанесение: ${methods.join(", ")}.`);
+  return { title, description: clip(parts.join(" "), 165) };
 }
