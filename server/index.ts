@@ -7,6 +7,7 @@ import { runMigrations } from "./migrate";
 
 const app = express();
 const httpServer = createServer(app);
+app.disable("x-powered-by");
 
 declare module "http" {
   interface IncomingMessage {
@@ -28,6 +29,16 @@ app.use(
 
 app.use(compression());
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+// Базовые заголовки безопасности. CSP не задаём: счётчики и виджеты подключаются
+// из админки (customHead), и строгая политика сломала бы их.
+app.use((_req, res, next) => {
+  res.setHeader("Strict-Transport-Security", "max-age=31536000");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  next();
+});
 
 // Static asset caching — immutable for hashed assets, 1h for HTML/API responses
 app.use((req, res, next) => {

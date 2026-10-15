@@ -30,6 +30,8 @@ export function serveStatic(app: Express) {
     const ext = path.extname(req.path).toLowerCase();
     if (![".png", ".jpg", ".jpeg"].includes(ext)) return next();
     const webpPath = path.join(distPath, req.path.replace(/\.(png|jpg|jpeg)$/i, ".webp"));
+    // Vary: Accept — по одному адресу разные форматы; кэши не должны отдать WebP браузеру без его поддержки.
+    res.setHeader("Vary", "Accept");
     if (fs.existsSync(webpPath)) {
       res.setHeader("Content-Type", "image/webp");
       res.setHeader("Cache-Control", "public, max-age=31536000");

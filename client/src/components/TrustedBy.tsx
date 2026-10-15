@@ -41,6 +41,8 @@ export default function TrustedBy() {
                 <img
                   src={c.logo}
                   alt={c.name}
+                  loading="lazy"
+                  decoding="async"
                   className="max-h-10 max-w-28 object-contain filter grayscale group-hover:grayscale-0 opacity-60 group-hover:opacity-100 transition-all duration-300"
                   onError={(e: any) => {
                     e.target.style.display = 'none';
@@ -67,6 +69,8 @@ export default function TrustedBy() {
                 <img
                   src={c.logo}
                   alt={c.name}
+                  loading="lazy"
+                  decoding="async"
                   className="max-h-10 max-w-28 object-contain filter grayscale group-hover:grayscale-0 opacity-60 group-hover:opacity-100 transition-all duration-300"
                   onError={(e: any) => {
                     e.target.style.display = 'none';
