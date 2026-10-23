@@ -42,6 +42,19 @@ function formatPrice(price: number): string {
   return price.toLocaleString("ru-RU") + " ₸";
 }
 
+// Категории и страницы каталога — настоящие ссылки <a href>: по кнопкам поисковик не переходит
+// и не находит подкатегории и товары дальше первой страницы. Обычный клик по-прежнему
+// обрабатывает onSelect/onPageChange (с сохранением фильтров), Ctrl+клик открывает новую вкладку.
+function spaClick(handler: () => void) {
+  return (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    handler();
+  };
+}
+
+const categoryHref = (slug: string) => (slug ? `/catalog?category=${slug}` : "/catalog");
+
 function CategorySidebar({ activeSlug, onSelect }: { activeSlug: string; onSelect: (slug: string) => void }) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
@@ -62,16 +75,18 @@ function CategorySidebar({ activeSlug, onSelect }: { activeSlug: string; onSelec
 
   return (
     <div data-testid="category-sidebar">
-      <button
+      <a
+        href={categoryHref("")}
         data-testid="category-all"
-        onClick={() => onSelect("")}
+        onClick={spaClick(() => onSelect(""))}
         className={cn(
           "w-full text-left py-2 px-3 text-sm font-semibold rounded-lg mb-1 transition-colors",
+          "block",
           !activeSlug ? "bg-gray-100 text-black" : "text-gray-700 hover:bg-gray-50"
         )}
       >
         Все товары
-      </button>
+      </a>
       {catalogCategories.map(cat => (
         <div key={cat.slug}>
           <div className="flex items-center">
@@ -83,31 +98,33 @@ function CategorySidebar({ activeSlug, onSelect }: { activeSlug: string; onSelec
                 {expanded[cat.slug] ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
               </button>
             )}
-            <button
+            <a
+              href={categoryHref(cat.slug)}
               data-testid={`category-${cat.slug}`}
-              onClick={() => onSelect(cat.slug)}
+              onClick={spaClick(() => onSelect(cat.slug))}
               className={cn(
                 "flex-1 text-left py-1.5 px-2 text-sm rounded-lg transition-colors",
                 activeSlug === cat.slug ? "bg-gray-100 font-semibold text-black" : "text-gray-700 hover:bg-gray-50"
               )}
             >
               {cat.name}
-            </button>
+            </a>
           </div>
-          {expanded[cat.slug] && cat.children && (
-            <div className="ml-6 border-l border-gray-200 pl-2">
+          {cat.children && (
+            <div className={cn("ml-6 border-l border-gray-200 pl-2", !expanded[cat.slug] && "hidden")}>
               {cat.children.map(child => (
-                <button
+                <a
                   key={child.slug}
+                  href={categoryHref(child.slug)}
                   data-testid={`category-${child.slug}`}
-                  onClick={() => onSelect(child.slug)}
+                  onClick={spaClick(() => onSelect(child.slug))}
                   className={cn(
-                    "w-full text-left py-1 px-2 text-sm rounded transition-colors",
+                    "block w-full text-left py-1 px-2 text-sm rounded transition-colors",
                     activeSlug === child.slug ? "bg-gray-100 font-semibold text-black" : "text-gray-500 hover:text-gray-800 hover:bg-gray-50"
                   )}
                 >
                   {child.name}
-                </button>
+                </a>
               ))}
             </div>
           )}
@@ -253,7 +270,7 @@ function ProductCardComponent({ product }: { product: ProductCard }) {
   );
 }
 
-function Pagination({ page, totalPages, onPageChange }: { page: number; totalPages: number; onPageChange: (p: number) => void }) {
+function Pagination({ page, totalPages, onPageChange, hrefFor }: { page: number; totalPages: number; onPageChange: (p: number) => void; hrefFor: (p: number) => string }) {
   if (totalPages <= 1) return null;
 
   const pages: (number | string)[] = [];
@@ -271,36 +288,50 @@ function Pagination({ page, totalPages, onPageChange }: { page: number; totalPag
 
   return (
     <div className="flex items-center justify-center gap-1 mt-8" data-testid="pagination">
-      <button
-        onClick={() => onPageChange(page - 1)}
-        disabled={page <= 1}
-        className="px-3 py-2 text-sm rounded-lg border border-gray-200 disabled:opacity-30 hover:bg-gray-50"
-      >
-        ←
-      </button>
+      {page > 1 ? (
+        <a
+          href={hrefFor(page - 1)}
+          rel="prev"
+          aria-label="Предыдущая страница"
+          onClick={spaClick(() => onPageChange(page - 1))}
+          className="px-3 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50"
+        >
+          ←
+        </a>
+      ) : (
+        <span className="px-3 py-2 text-sm rounded-lg border border-gray-200 opacity-30" aria-hidden="true">←</span>
+      )}
       {pages.map((p, i) => (
         typeof p === "number" ? (
-          <button
+          <a
             key={i}
-            onClick={() => onPageChange(p)}
+            href={hrefFor(p)}
+            aria-current={p === page ? "page" : undefined}
+            onClick={spaClick(() => onPageChange(p))}
             className={cn(
-              "w-9 h-9 text-sm rounded-lg transition-colors",
+              "w-9 h-9 text-sm rounded-lg transition-colors flex items-center justify-center",
               p === page ? "bg-black text-white" : "border border-gray-200 hover:bg-gray-50"
             )}
           >
             {p}
-          </button>
+          </a>
         ) : (
           <span key={i} className="px-1 text-gray-400">…</span>
         )
       ))}
-      <button
-        onClick={() => onPageChange(page + 1)}
-        disabled={page >= totalPages}
-        className="px-3 py-2 text-sm rounded-lg border border-gray-200 disabled:opacity-30 hover:bg-gray-50"
-      >
-        →
-      </button>
+      {page < totalPages ? (
+        <a
+          href={hrefFor(page + 1)}
+          rel="next"
+          aria-label="Следующая страница"
+          onClick={spaClick(() => onPageChange(page + 1))}
+          className="px-3 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50"
+        >
+          →
+        </a>
+      ) : (
+        <span className="px-3 py-2 text-sm rounded-lg border border-gray-200 opacity-30" aria-hidden="true">→</span>
+      )}
     </div>
   );
 }
@@ -338,6 +369,14 @@ export default function Catalog() {
     if (!updates.page) current.set("page", "1");
     setLocation(`/catalog?${current.toString()}`);
   }, [searchString, setLocation]);
+
+  const pageHref = (p: number) => {
+    const next = new URLSearchParams(searchString);
+    if (p > 1) next.set("page", String(p));
+    else next.delete("page");
+    const qs = next.toString();
+    return qs ? `/catalog?${qs}` : "/catalog";
+  };
 
   const queryParams = new URLSearchParams();
   if (categorySlug) queryParams.set("category", categorySlug);
@@ -543,6 +582,7 @@ export default function Catalog() {
                   page={data.page}
                   totalPages={data.totalPages}
                   onPageChange={p => updateParams({ page: String(p) })}
+                  hrefFor={pageHref}
                 />
               </>
             ) : (

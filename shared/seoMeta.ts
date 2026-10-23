@@ -3,6 +3,7 @@
 // после загрузки JS title, description и canonical остаются теми же, что отдал сервер.
 
 import { SITE_URL, MIN_RUN_LABEL } from "./site";
+import { findCategoryBySlug } from "../client/src/data/catalogCategories";
 
 export type PageMeta = { title: string; description: string; canonical: string; matched: boolean };
 
@@ -46,15 +47,38 @@ const DEFAULT_META: Meta = { title: "Корпоративный мерч и пе
 // /poshiv — дубль /uslugi/poshiv, canonical ведёт на основную страницу.
 const CANONICAL_ALIASES: Record<string, string> = { "/poshiv": "/uslugi/poshiv" };
 
+// Для подкатегорий без ручной меты (поло, худи, термосы…) — мета из названия категории.
+// Раньше они получали canonical на /catalog и для Google были дублями общего каталога.
+function categoryMeta(slug: string): Meta | undefined {
+  const cat = slug ? findCategoryBySlug(slug) : undefined;
+  if (!cat) return undefined;
+  const h1 = cat.h1 || `${cat.name} с логотипом`;
+  return {
+    title: `${h1} на заказ в Алматы | ZERO PRINT`,
+    description: `${h1} оптом: нанесение логотипа, тираж ${MIN_RUN_LABEL}. Доставка по Казахстану.`,
+  };
+}
+
 export function getMetaForPath(urlPath: string, query: string): PageMeta {
   // /catalog/ и /catalog — одна страница, canonical без конечного слэша.
   const path = urlPath.replace(/\/+$/, "") || "/";
 
   if (path === "/catalog") {
-    const category = new URLSearchParams(query).get("category") || "";
-    const meta = CATEGORY_META[category];
-    if (meta) return { ...meta, canonical: `${SITE_URL}/catalog?category=${encodeURIComponent(category)}`, matched: true };
-    return { ...CATALOG_META, canonical: `${SITE_URL}/catalog`, matched: true };
+    const params = new URLSearchParams(query);
+    const category = params.get("category") || "";
+    // Страницы 2, 3… — свой canonical и номер в title: иначе Google считает их дублями
+    // первой и не доходит до товаров на них. Фильтры и сортировка в canonical не входят.
+    const page = Math.max(1, parseInt(params.get("page") || "1", 10) || 1);
+    const pageSuffix = page > 1 ? ` — страница ${page}` : "";
+    const withPage = (base: Meta, url: string): PageMeta => ({
+      title: page > 1 ? base.title.replace(" | ", `${pageSuffix} | `) : base.title,
+      description: base.description,
+      canonical: page > 1 ? `${url}${url.includes("?") ? "&" : "?"}page=${page}` : url,
+      matched: true,
+    });
+    const meta = CATEGORY_META[category] ?? categoryMeta(category);
+    if (meta) return withPage(meta, `${SITE_URL}/catalog?category=${encodeURIComponent(category)}`);
+    return withPage(CATALOG_META, `${SITE_URL}/catalog`);
   }
 
   const aliased = CANONICAL_ALIASES[path] ?? path;

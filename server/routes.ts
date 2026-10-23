@@ -12,6 +12,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+import { catalogCategories } from "../client/src/data/catalogCategories";
 
 const JWT_SECRET = process.env.JWT_SECRET || "zeroprint_jwt_2025";
 
@@ -720,18 +721,14 @@ export async function registerRoutes(
       { url: "/about", priority: "0.6", freq: "monthly" },
       { url: "/kontakty", priority: "0.7", freq: "monthly" },
       
-      { url: "/catalog?category=futbolki", priority: "0.8", freq: "weekly" },
-      { url: "/catalog?category=ruchki", priority: "0.8", freq: "weekly" },
-      { url: "/catalog?category=termosy", priority: "0.8", freq: "weekly" },
-      { url: "/catalog?category=zonty", priority: "0.8", freq: "weekly" },
-      { url: "/catalog?category=sumki", priority: "0.8", freq: "weekly" },
-      { url: "/catalog?category=elektronika", priority: "0.8", freq: "weekly" },
-      { url: "/catalog?category=odezhda", priority: "0.8", freq: "weekly" },
-      { url: "/catalog?category=ofisnye", priority: "0.7", freq: "weekly" },
-      { url: "/catalog?category=aksessuary", priority: "0.7", freq: "weekly" },
-      { url: "/catalog?category=delovye-podarki", priority: "0.7", freq: "weekly" },
-      { url: "/catalog?category=upakovka", priority: "0.7", freq: "weekly" },
     ];
+
+    // Все категории и подкатегории каталога (раньше в sitemap было только 11 крупных).
+    const categoryUrls = catalogCategories.flatMap(c => [c, ...(c.children || [])]).map(c => ({
+      url: `/catalog?category=${c.slug}`,
+      priority: c.children ? "0.8" : "0.7",
+      freq: "weekly",
+    }));
 
     const productUrls = products.slice(0, 2000).map(p => ({
       url: `/catalog/product/${p.id}`,
@@ -739,7 +736,7 @@ export async function registerRoutes(
       freq: "weekly",
     }));
 
-    const allUrls = [...staticPages, ...productUrls];
+    const allUrls = [...staticPages, ...categoryUrls, ...productUrls];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
