@@ -13,7 +13,12 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 
-const JWT_SECRET = process.env.JWT_SECRET || "zeroprint_jwt_2025";
+// Секрет подписывает входы клиентов, менеджеров и админа. Репозиторий публичный,
+// поэтому запасного значения в коде нет: без надёжного секрета сервер не стартует.
+const JWT_SECRET = process.env.JWT_SECRET || "";
+if (JWT_SECRET.length < 32) {
+  throw new Error("JWT_SECRET must be set to a random string of at least 32 characters");
+}
 
 const mailTransporter = nodemailer.createTransport({
   service: "gmail",
