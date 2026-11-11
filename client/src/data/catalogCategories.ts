@@ -82,7 +82,7 @@ export const catalogCategories: CatalogCategory[] = [
   { id: 3257, slug: "avto", name: "Автоаксессуары", h1: "Автоаксессуары с логотипом" },
   { id: 3180, slug: "dlya-doma", name: "Для дома", h1: "Товары для дома с логотипом" },
   { id: 3095, slug: "dlya-otdyha", name: "Для отдыха", h1: "Товары для отдыха с логотипом" },
-  { id: 3167, slug: "dlya-sporta", name: "Для спорта", h1: "Спорттовары с логотипом" },
+  { id: 3167, slug: "sport", name: "Для спорта", h1: "Спорттовары с логотипом" },
   { id: 4197, slug: "dlya-detej", name: "Для детей", h1: "Детские товары с логотипом" },
   { id: 3543, slug: "sedobnye", name: "Съедобные подарки", h1: "Съедобные подарки" },
 ];

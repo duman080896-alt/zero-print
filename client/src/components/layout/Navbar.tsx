@@ -55,7 +55,7 @@ const catalogMegaMenu = {
         { name: "Награды", href: "/catalog?category=delovye-podarki" },
         { name: "Антистресс", href: "/catalog?category=aksessuary" },
         { name: "Электроника", href: "/catalog?category=elektronika" },
-        { name: "Спорт", href: "/catalog?category=dlya-sporta" },
+        { name: "Спорт", href: "/catalog?category=sport" },
       ],
       footerLink: { name: "Весь каталог →", href: "/catalog" },
     },

@@ -408,7 +408,7 @@ const catalogCats = [
   { id: 3257, slug: "avto", name: "Автоаксессуары" },
   { id: 3180, slug: "dlya-doma", name: "Для дома" },
   { id: 3095, slug: "dlya-otdyha", name: "Для отдыха" },
-  { id: 3167, slug: "dlya-sporta", name: "Для спорта" },
+  { id: 3167, slug: "sport", name: "Для спорта" },
   { id: 4197, slug: "dlya-detej", name: "Для детей" },
   { id: 3543, slug: "sedobnye", name: "Съедобные подарки" },
 ];
@@ -672,7 +672,7 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/sync", async (_req, res) => {
+  app.post("/api/sync", requireAdminAuth as any, async (_req, res) => {
     try {
       const count = await syncProducts();
       const products = getProducts();
