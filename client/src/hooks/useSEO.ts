@@ -46,6 +46,10 @@ export function useSEO(title: string, description: string, keywords?: string, _c
     setMetaTag("property", "og:url", meta.canonical);
     setMetaTag("name", "twitter:title", finalTitle);
     setMetaTag("name", "twitter:description", finalDescription);
+    if (meta.matched && meta.ogImage) {
+      setMetaTag("property", "og:image", meta.ogImage);
+      setMetaTag("name", "twitter:image", meta.ogImage);
+    }
     setCanonical(meta.canonical);
   }, [location, search, title, description, keywords]);
 }

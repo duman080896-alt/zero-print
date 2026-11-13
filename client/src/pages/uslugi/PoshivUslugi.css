@@ -1,0 +1,85 @@
+/* PoshivUslugi.css — стили продающей страницы пошива */
+
+/* Появление секций при прокрутке */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+.stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.stagger.visible > * {
+  opacity: 1;
+  transform: none;
+}
+.stagger.visible > *:nth-child(2) { transition-delay: 0.06s; }
+.stagger.visible > *:nth-child(3) { transition-delay: 0.12s; }
+.stagger.visible > *:nth-child(4) { transition-delay: 0.18s; }
+.stagger.visible > *:nth-child(5) { transition-delay: 0.24s; }
+.stagger.visible > *:nth-child(6) { transition-delay: 0.3s; }
+.stagger.visible > *:nth-child(7) { transition-delay: 0.36s; }
+.stagger.visible > *:nth-child(8) { transition-delay: 0.42s; }
+
+/* Ответ FAQ */
+.poshiv-faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+.poshiv-faq-answer.open {
+  max-height: 400px;
+  padding-bottom: 20px;
+}
+
+/* Гигантское слово позади людей в hero */
+.poshiv-hero-word {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  font-family: Montserrat, sans-serif;
+  font-weight: 900;
+  font-size: clamp(64px, 17vw, 220px);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: #ddd9d1;
+  user-select: none;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 0;
+}
+
+/* Тень-пол под людьми */
+.poshiv-hero-floor {
+  position: absolute;
+  left: 50%;
+  bottom: -4%;
+  transform: translateX(-50%);
+  width: 86%;
+  height: 12%;
+  background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.18) 0%, rgba(15, 23, 42, 0) 70%);
+  z-index: 0;
+}
+
+/* На мобильном глобальные плавающие кнопки прячем: внизу есть sticky-CTA */
+@media (max-width: 1023px) {
+  body:has(.poshiv-page) [data-testid="floating-buttons"] {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .stagger > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

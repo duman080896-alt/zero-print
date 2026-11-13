@@ -440,7 +440,7 @@ export default function NicheLanding({ config }: { config: NicheConfig }) {
                 📞 Позвонить {PHONE}
               </a>
             </div>
-            <p className="mt-8 text-orange-200 text-sm">г. Алматы, ул. Радостовца 152/6, офис 104</p>
+            <p className="mt-8 text-orange-200 text-sm">г. Алматы, ул. Садуакасулы 22</p>
           </RevealSection>
         </div>
       </section>

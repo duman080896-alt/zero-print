@@ -410,7 +410,7 @@ export default function KpView({ params }: { params: { id: string } }) {
           </div>
 
           <div style={{ textAlign: "center", marginTop: 16, fontSize: 11, color: "#9ca3af" }}>
-            ZERO PRINT • г. Алматы, ул. Радостовца 152/6, офис 104 • zeroprint.kz@gmail.com
+            ZERO PRINT • г. Алматы, ул. Садуакасулы 22 • zeroprint.kz@gmail.com
           </div>
         </div>
       </div>

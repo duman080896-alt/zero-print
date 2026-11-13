@@ -12,8 +12,8 @@ export default function Contact() {
   const [message, setMessage] = useState("");
 
   useSEO(
-    "Контакты ZERO PRINT — Алматы, Радостовца 152/6 | +7 700 158 40 39",
-    "ZERO PRINT в Алматы: ул. Радостовца 152/6, офис 104. WhatsApp: +7 771 624 64 61. Звонки: +7 700 158 40 39. Брендирование, полиграфия, пошив одежды. Пн-Пт 9:00-18:00",
+    "Контакты ZERO PRINT — Алматы, ул. Садуакасулы 22 | +7 700 158 40 39",
+    "ZERO PRINT в Алматы: ул. Садуакасулы 22. WhatsApp: +7 771 624 64 61. Звонки: +7 700 158 40 39. Брендирование, полиграфия, пошив одежды. Пн-Пт 9:00-18:00",
     "контакты ZERO PRINT, ZERO PRINT Алматы, полиграфия Алматы контакты"
   );
 
@@ -94,8 +94,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-xs text-gray-400 mb-1">Адрес</p>
-                    <p className="font-bold text-[#0a1628]">г. Алматы, ул. Радостовца 152/6</p>
-                    <p className="text-gray-500">офис 104</p>
+                    <p className="font-bold text-[#0a1628]">г. Алматы, ул. Садуакасулы 22</p>
                     <a
                       href={`https://www.google.com/maps/search/?api=1&query=${COMPANY.geo.latitude},${COMPANY.geo.longitude}`}
                       target="_blank"
@@ -201,24 +200,6 @@ export default function Contact() {
               📱 Отправить через WhatsApp
             </button>
           </form>
-        </div>
-      </section>
-
-      <section className="py-20" data-testid="section-directions">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold font-heading text-center mb-12 text-[#0a1628]">Как нас найти</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-            <div className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm" data-testid="directions-car">
-              <div className="text-3xl mb-3">🚗</div>
-              <h3 className="font-bold text-lg mb-2 text-[#0a1628]">На машине</h3>
-              <p className="text-gray-500 text-sm">Ул. Радостовца 152/6. Парковка на территории бизнес-центра.</p>
-            </div>
-            <div className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm" data-testid="directions-bus">
-              <div className="text-3xl mb-3">🚌</div>
-              <h3 className="font-bold text-lg mb-2 text-[#0a1628]">На общественном транспорте</h3>
-              <p className="text-gray-500 text-sm">Автобусы: маршруты, следующие по ул. Радостовца.</p>
-            </div>
-          </div>
         </div>
       </section>
 

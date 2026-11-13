@@ -79,8 +79,7 @@ export default function Footer() {
               <div className="flex items-start gap-3 text-gray-400">
                 <MapPin className="h-5 w-5 text-accent shrink-0 mt-0.5" />
                 <div>
-                  <div>г. Алматы, ул. Радостовца 152/6</div>
-                  <div>офис 104</div>
+                  <div>г. Алматы, ул. Садуакасулы 22</div>
                 </div>
               </div>
               <div className="flex items-start gap-3 text-gray-400">

@@ -9,7 +9,6 @@ import { lazy, Suspense, useEffect } from "react";
 // ✅ Ленивая загрузка — каждая страница грузится только когда нужна
 const NotFound = lazy(() => import("@/pages/not-found"));
 const Home = lazy(() => import("@/pages/Home"));
-const Poshiv = lazy(() => import("@/pages/Poshiv"));
 const Poligrafiya = lazy(() => import("@/pages/Poligrafiya"));
 const Portfolio = lazy(() => import("@/pages/Portfolio"));
 const About = lazy(() => import("@/pages/About"));
@@ -122,7 +121,6 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/landing" component={Landing} />
-        <Route path="/poshiv" component={Poshiv} />
         <Route path="/poligrafiya" component={Poligrafiya} />
         <Route path="/portfolio" component={Portfolio} />
         <Route path="/about" component={About} />

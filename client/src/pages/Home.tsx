@@ -77,14 +77,14 @@ export default function Home() {
               title="Вышивка"
               description="Качественная вышивка на униформе, кепках и премиальной одежде."
               icon={<CheckCircle className="h-8 w-8" />}
-              href="/poshiv"
+              href="/uslugi/vyshivka"
               image="/assets/portfolio-clothing.png"
             />
             <ServiceCard 
               title="Пошив"
               description="Индивидуальный пошив униформы, спецодежды и промо-одежды."
               icon={<Users className="h-8 w-8" />}
-              href="/poshiv"
+              href="/uslugi/poshiv"
               image="/assets/tailoring-hero.png"
             />
             <ServiceCard 

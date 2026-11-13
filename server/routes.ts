@@ -47,7 +47,7 @@ function sendWelcomeEmail(toEmail: string, clientName: string) {
   </div>
   <div style="background:#f8fafc;padding:20px;text-align:center;font-size:12px;color:#9ca3af;line-height:1.8;">
     <strong style="color:#111;">ZERO PRINT</strong><br>
-    г. Алматы, ул. Радостовца 152/6, офис 104<br>
+    г. Алматы, ул. Садуакасулы 22<br>
     WhatsApp: +7 771 624 64 61 • Instagram: @zeroprint.kz
   </div>
 </div>`;
@@ -146,7 +146,7 @@ function generateKpHtml(p: any, baseUrl = ""): string {
         </div>
       </div>
       <div class="page-footer">
-        <span>ZERO PRINT • г. Алматы, ул. Радостовца 152/6, офис 104</span>
+        <span>ZERO PRINT • г. Алматы, ул. Садуакасулы 22</span>
         <span>Действует до ${validUntil.toLocaleDateString('ru-RU')}</span>
       </div>
     </div>`;
@@ -249,7 +249,7 @@ function generateKpHtml(p: any, baseUrl = ""): string {
         <a href="tel:+77001584039" class="phone-btn">📞 +7 700 158 40 39</a>
       </div>
       <div class="page-footer">
-        <span>ZERO PRINT • г. Алматы, ул. Радостовца 152/6, офис 104</span>
+        <span>ZERO PRINT • г. Алматы, ул. Садуакасулы 22</span>
         <span>WhatsApp: +7 771 624 64 61</span>
       </div>
     </div>`;
@@ -709,13 +709,15 @@ export async function registerRoutes(
     const products = getProducts();
     const baseUrl = "https://zeroprint.kz";
 
+    // Дата последнего содержательного обновления статических страниц (деплой правок).
+    const staticLastmod = "2026-11-12";
     const staticPages = [
-      { url: "/", priority: "1.0", freq: "weekly" },
+      { url: "/", priority: "1.0", freq: "weekly", lastmod: staticLastmod },
       { url: "/catalog", priority: "0.9", freq: "daily" },
       { url: "/poligrafiya", priority: "0.9", freq: "monthly" },
       { url: "/uslugi/vyshivka", priority: "0.9", freq: "monthly" },
       { url: "/uslugi/pechat", priority: "0.9", freq: "monthly" },
-      { url: "/uslugi/poshiv", priority: "0.9", freq: "monthly" },
+      { url: "/uslugi/poshiv", priority: "0.9", freq: "monthly", lastmod: staticLastmod },
       { url: "/uslugi/brendirovanie", priority: "0.9", freq: "monthly" },
       { url: "/uslugi/horeca", priority: "0.8", freq: "monthly" },
       { url: "/uslugi/stroitelstvo", priority: "0.8", freq: "monthly" },
@@ -724,8 +726,7 @@ export async function registerRoutes(
       { url: "/uslugi/shkoly", priority: "0.8", freq: "monthly" },
       { url: "/portfolio", priority: "0.8", freq: "monthly" },
       { url: "/about", priority: "0.6", freq: "monthly" },
-      { url: "/kontakty", priority: "0.7", freq: "monthly" },
-      
+      { url: "/kontakty", priority: "0.7", freq: "monthly", lastmod: staticLastmod },
     ];
 
     // Все категории и подкатегории каталога (раньше в sitemap было только 11 крупных).
@@ -741,12 +742,14 @@ export async function registerRoutes(
       freq: "weekly",
     }));
 
-    const allUrls = [...staticPages, ...categoryUrls, ...productUrls];
+    const allUrls: { url: string; priority: string; freq: string; lastmod?: string }[] =
+      [...staticPages, ...categoryUrls, ...productUrls];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${allUrls.map(p => `  <url>
-    <loc>${baseUrl}${p.url}</loc>
+    <loc>${baseUrl}${p.url}</loc>${p.lastmod ? `
+    <lastmod>${p.lastmod}</lastmod>` : ""}
     <changefreq>${p.freq}</changefreq>
     <priority>${p.priority}</priority>
   </url>`).join("\n")}

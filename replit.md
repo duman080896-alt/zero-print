@@ -11,7 +11,7 @@ A modern, conversion-focused B2B website for ZERO PRINT (zero-promo.kz), a Kazak
 ## Contact Info
 - **WhatsApp**: +7 771 624 64 61 (wa.me/77716246461)
 - **Phone**: +7 700 158 40 39 (tel:+77001584039)
-- **Address**: г. Алматы, ул. Радостовца 152/6, офис 104
+- **Address**: г. Алматы, ул. Садуакасулы 22
 - **Hours**: Пн-Пт: 9:00 — 18:00
 - **Email**: zeroprint.kz@gmail.com
 - **Instagram**: https://instagram.com/zeroprint.kz
