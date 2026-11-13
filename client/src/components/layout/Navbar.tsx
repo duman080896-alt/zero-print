@@ -63,13 +63,13 @@ const catalogMegaMenu = {
 };
 
 const poshivDropdown = [
-  { name: "Пошив футболок", href: "/poshiv" },
-  { name: "Пошив курток", href: "/poshiv" },
-  { name: "Пошив рубашек и поло", href: "/poshiv" },
-  { name: "Пошив головных уборов", href: "/poshiv" },
-  { name: "Пошив худи и свитшотов", href: "/poshiv" },
-  { name: "Пошив спецодежды", href: "/poshiv" },
-  { name: "Пошив сумок и рюкзаков", href: "/poshiv" },
+  { name: "Пошив футболок", href: "/uslugi/poshiv" },
+  { name: "Пошив курток", href: "/uslugi/poshiv" },
+  { name: "Пошив рубашек и поло", href: "/uslugi/poshiv" },
+  { name: "Пошив головных уборов", href: "/uslugi/poshiv" },
+  { name: "Пошив худи и свитшотов", href: "/uslugi/poshiv" },
+  { name: "Пошив спецодежды", href: "/uslugi/poshiv" },
+  { name: "Пошив сумок и рюкзаков", href: "/uslugi/poshiv" },
 ];
 
 const uslugiItems = [

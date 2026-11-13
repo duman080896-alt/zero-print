@@ -13,13 +13,13 @@ export const COMPANY = {
   responseMinutes: 3,
   email: "zeroprint.kz@gmail.com",
   address: {
-    streetAddress: "ул. Радостовца 152/6, офис 104",
+    streetAddress: "ул. Садуакасулы 22",
     addressLocality: "Алматы",
     addressRegion: "Алматы",
-    postalCode: "050059",
+    postalCode: "050006",
     addressCountry: "KZ",
   },
-  geo: { latitude: 43.22884, longitude: 76.89417 },
+  geo: { latitude: 43.201247, longitude: 76.827662 },
   phones: {
     main: { tel: "+77716246461", display: "+7 771 624 64 61" },
     sales: { tel: "+77001584039", display: "+7 700 158 40 39" },

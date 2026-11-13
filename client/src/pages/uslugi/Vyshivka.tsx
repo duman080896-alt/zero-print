@@ -614,7 +614,7 @@ export default function Vyshivka() {
             <div className="flex flex-col gap-1 text-right">
               <a href="tel:+77716246461" className="text-white/40 hover:text-white transition-colors no-underline">+7 771 624 64 61</a>
               <a href="mailto:zeroprint.kz@gmail.com" className="text-white/40 hover:text-white transition-colors no-underline">zeroprint.kz@gmail.com</a>
-              <span>ул. Радостовца 152/6, офис 104, Алматы</span>
+              <span>ул. Садуакасулы 22, Алматы</span>
             </div>
           </div>
         </footer>
